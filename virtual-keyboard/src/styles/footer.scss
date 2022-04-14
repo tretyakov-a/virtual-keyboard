@@ -1,0 +1,76 @@
+.footer {
+  height: var(--footer-height);
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__github-link {
+    margin-right: 40px;
+  }
+  
+  &__github-link:hover {
+    color: var(--highlight-color);
+  }
+  
+  .logo {
+    display: block;
+    width: 120px;
+    margin-right: 40px;
+  }
+
+  &__github-link {
+    text-align: right;
+    margin-top: 10px;
+    color: var(--dark-text-color);
+    display: flex;
+    align-items: center;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      transition: 0.2s;
+
+      i {
+        margin-right: 5px;
+      }
+
+      img {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
+
+    a:hover {
+      color: var(--light-text-color);
+    }
+  }
+
+  &__logo {
+    display: block;
+    width: 120px;
+    margin-right: 40px;
+
+    .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st8, .st9 {
+      fill: var(--bg-color);
+      stroke: var(--dark-text-color);
+    }
+
+    // JS background
+    .st1 {
+      fill: var(--main-color);
+    }
+    // JS oval background
+    .st7 {
+      fill: var(--bg-color);
+    }
+    // RS SCHOOL
+    .logo-path {
+      fill: var(--bg-color);
+      stroke: var(--dark-text-color);
+      stroke-width: 4px;
+    }
+  }
+}
