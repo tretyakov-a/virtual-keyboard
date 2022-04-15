@@ -33,3 +33,93 @@ ul {
   margin: 0 auto;
   padding: 0 var(--container-padding);
 }
+
+.button {
+  width: 50px;
+  height: 50px;
+  margin-right: 5px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 1px 1px 2px 0px gray;
+  text-align: left;
+  padding: 4px;
+  font-family: 'Arial', serif;
+  font-size: 18px;
+  transition: 0.2s;
+  border: 1px solid gray;
+  
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+    background-color: rgba(red, 0.1);
+  }
+
+  &:hover {
+    background-color: rgba(gray, 0.2);
+  }
+
+  &_backspace {
+    width: 112px;
+  }
+
+  &_tab {
+    width: 58px;
+  }
+
+  &_capslock, &_controlleft {
+    width: 80px;
+  }
+
+  &_enter {
+    width: 138px;
+  }
+
+  &_shiftleft {
+    width: 118px;
+  }
+
+  &_shiftright {
+    width: 155px;
+  }
+
+  &_space {
+    width: 358px;
+  }
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  row-gap: 2px;
+  margin-right: 5px;
+
+  &__empty-space {
+    width: 50px;
+    height: 24px;
+  }
+
+  .button {
+    height: 24px;
+    margin-right: 0px;
+  }
+}
+
+textarea {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+
+  &:focus {
+    outline: 2px solid gray;
+  }
+}
+
+.keyboard {
+  max-width: 834px;
+  margin: 0 auto;
+
+  &__row {
+    display: flex;
+    margin-bottom: 5px;
+  }
+}

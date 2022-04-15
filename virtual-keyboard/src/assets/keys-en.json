@@ -1,0 +1,398 @@
+{
+  "Backquote": {
+    "key": "`",
+    "caps": "`",
+    "capsAndShift": "~",
+    "shift": "~"
+  },
+  "Digit1": {
+    "key": "1",
+    "shift": "!",
+    "caps": "1",
+    "capsAndShift": "!"
+  },
+  "Digit2": {
+    "shift": "@",
+    "caps": "2",
+    "capsAndShift": "@",
+    "key": "2"
+  },
+  "Digit3": {
+    "key": "3",
+    "shift": "#",
+    "caps": "3",
+    "capsAndShift": "#"
+  },
+  "Digit4": {
+    "key": "4",
+    "shift": "$",
+    "caps": "4",
+    "capsAndShift": "$"
+  },
+  "Digit5": {
+    "key": "5",
+    "shift": "%",
+    "caps": "5",
+    "capsAndShift": "%"
+  },
+  "Digit6": {
+    "key": "6",
+    "shift": "^",
+    "caps": "6",
+    "capsAndShift": "^"
+  },
+  "Digit7": {
+    "key": "7",
+    "shift": "&",
+    "caps": "7",
+    "capsAndShift": "&"
+  },
+  "Digit8": {
+    "key": "8",
+    "shift": "*",
+    "caps": "8",
+    "capsAndShift": "*"
+  },
+  "Digit9": {
+    "key": "9",
+    "shift": "(",
+    "caps": "9",
+    "capsAndShift": "("
+  },
+  "Digit0": {
+    "key": "0",
+    "shift": ")",
+    "caps": "0",
+    "capsAndShift": ")"
+  },
+  "Minus": {
+    "key": "-",
+    "shift": "_",
+    "caps": "-",
+    "capsAndShift": "_"
+  },
+  "Equal": {
+    "key": "=",
+    "shift": "+",
+    "caps": "=",
+    "capsAndShift": "+"
+  },
+  "KeyQ": {
+    "key": "q",
+    "shift": "Q",
+    "caps": "Q",
+    "capsAndShift": "q"
+  },
+  "KeyW": {
+    "key": "w",
+    "shift": "W",
+    "caps": "W",
+    "capsAndShift": "w"
+  },
+  "KeyE": {
+    "key": "e",
+    "shift": "E",
+    "caps": "E",
+    "capsAndShift": "e"
+  },
+  "KeyR": {
+    "key": "r",
+    "shift": "R",
+    "caps": "R",
+    "capsAndShift": "r"
+  },
+  "KeyT": {
+    "key": "t",
+    "shift": "T",
+    "caps": "T",
+    "capsAndShift": "t"
+  },
+  "KeyY": {
+    "key": "y",
+    "shift": "Y",
+    "caps": "Y",
+    "capsAndShift": "y"
+  },
+  "KeyU": {
+    "key": "u",
+    "shift": "U",
+    "caps": "U",
+    "capsAndShift": "u"
+  },
+  "KeyI": {
+    "key": "i",
+    "shift": "I",
+    "caps": "I",
+    "capsAndShift": "i"
+  },
+  "KeyO": {
+    "key": "o",
+    "shift": "O",
+    "caps": "O",
+    "capsAndShift": "o"
+  },
+  "KeyP": {
+    "key": "p",
+    "shift": "P",
+    "caps": "P",
+    "capsAndShift": "p"
+  },
+  "BracketLeft": {
+    "key": "[",
+    "shift": "{",
+    "caps": "[",
+    "capsAndShift": "{"
+  },
+  "BracketRight": {
+    "key": "]",
+    "shift": "}",
+    "caps": "]",
+    "capsAndShift": "}"
+  },
+  "Backslash": {
+    "key": "\\",
+    "shift": "|",
+    "caps": "\\",
+    "capsAndShift": "|"
+  },
+  "KeyA": {
+    "key": "a",
+    "shift": "A",
+    "caps": "A",
+    "capsAndShift": "a"
+  },
+  "KeyS": {
+    "key": "s",
+    "shift": "S",
+    "caps": "S",
+    "capsAndShift": "s"
+  },
+  "KeyD": {
+    "key": "d",
+    "shift": "D",
+    "caps": "D",
+    "capsAndShift": "d"
+  },
+  "KeyF": {
+    "key": "f",
+    "shift": "F",
+    "caps": "F",
+    "capsAndShift": "f"
+  },
+  "KeyG": {
+    "key": "g",
+    "shift": "G",
+    "caps": "G",
+    "capsAndShift": "g"
+  },
+  "KeyH": {
+    "key": "h",
+    "shift": "H",
+    "caps": "H",
+    "capsAndShift": "h"
+  },
+  "KeyJ": {
+    "key": "j",
+    "shift": "J",
+    "caps": "J",
+    "capsAndShift": "j"
+  },
+  "KeyK": {
+    "key": "k",
+    "shift": "K",
+    "caps": "K",
+    "capsAndShift": "k"
+  },
+  "KeyL": {
+    "key": "l",
+    "shift": "L",
+    "caps": "L",
+    "capsAndShift": "l"
+  },
+  "Semicolon": {
+    "key": ";",
+    "shift": ":",
+    "caps": ";",
+    "capsAndShift": ":"
+  },
+  "Quote": {
+    "key": "'",
+    "shift": "\"",
+    "caps": "'",
+    "capsAndShift": "\""
+  },
+  "Enter": {
+    "key": "Enter",
+    "shift": "Enter",
+    "caps": "Enter",
+    "capsAndShift": "Enter"
+  },
+  "KeyZ": {
+    "key": "z",
+    "shift": "Z",
+    "caps": "Z",
+    "capsAndShift": "z"
+  },
+  "KeyX": {
+    "key": "x",
+    "shift": "X",
+    "caps": "X",
+    "capsAndShift": "x"
+  },
+  "KeyC": {
+    "key": "c",
+    "shift": "C",
+    "caps": "C",
+    "capsAndShift": "c"
+  },
+  "KeyV": {
+    "key": "v",
+    "shift": "V",
+    "caps": "V",
+    "capsAndShift": "v"
+  },
+  "KeyB": {
+    "key": "b",
+    "shift": "B",
+    "caps": "B",
+    "capsAndShift": "b"
+  },
+  "KeyN": {
+    "key": "n",
+    "shift": "N",
+    "caps": "N",
+    "capsAndShift": "n"
+  },
+  "KeyM": {
+    "key": "m",
+    "shift": "M",
+    "caps": "M",
+    "capsAndShift": "m"
+  },
+  "Comma": {
+    "key": ",",
+    "shift": "<",
+    "caps": ",",
+    "capsAndShift": "<"
+  },
+  "Period": {
+    "key": ".",
+    "shift": ">",
+    "caps": ".",
+    "capsAndShift": ">"
+  },
+  "Slash": {
+    "key": "/",
+    "shift": "?",
+    "caps": "/",
+    "capsAndShift": "?"
+  },
+  "Backspace": {
+    "key": "Backspace",
+    "shift": "Backspace",
+    "caps": "Backspace",
+    "capsAndShift": "Backspace"
+  },
+  "ShiftRight": {
+    "key": "Shift",
+    "caps": "Shift",
+    "shift": "Shift",
+    "capsAndShift": "Shift"
+  },
+  "CapsLock": {
+    "caps": "CapsLock",
+    "key": "CapsLock",
+    "capsAndShift": "CapsLock",
+    "shift": "CapsLock"
+  },
+  "ShiftLeft": {
+    "key": "Shift",
+    "shift": "Shift",
+    "caps": "Shift",
+    "capsAndShift": "Shift"
+  },
+  "Tab": {
+    "key": "Tab",
+    "shift": "Tab",
+    "caps": "Tab",
+    "capsAndShift": "Tab"
+  },
+  "ControlLeft": {
+    "key": "Control",
+    "caps": "Control",
+    "shift": "Control",
+    "capsAndShift": "Control"
+  },
+  "MetaLeft": {
+    "key": "Meta",
+    "caps": "Meta",
+    "shift": "Meta",
+    "capsAndShift": "Meta"
+  },
+  "AltLeft": {
+    "key": "Alt",
+    "caps": "Alt",
+    "shift": "Alt",
+    "capsAndShift": "Alt"
+  },
+  "Space": {
+    "key": " ",
+    "caps": " ",
+    "shift": " ",
+    "capsAndShift": " "
+  },
+  "AltRight": {
+    "key": "Alt",
+    "caps": "Alt",
+    "shift": "Alt",
+    "capsAndShift": "Alt"
+  },
+  "ContextMenu": {
+    "key": "ContextMenu",
+    "caps": "ContextMenu",
+    "shift": "ContextMenu",
+    "capsAndShift": "ContextMenu"
+  },
+  "ControlRight": {
+    "key": "Control",
+    "caps": "Control",
+    "shift": "Control",
+    "capsAndShift": "Control"
+  },
+  "MetaRight": {
+    "key": "Meta",
+    "caps": "Meta",
+    "shift": "Meta",
+    "capsAndShift": "Meta"
+  },
+  "ArrowUp": {
+    "key": "ArrowUp",
+    "caps": "ArrowUp",
+    "shift": "ArrowUp",
+    "capsAndShift": "ArrowUp"
+  },
+  "ArrowDown": {
+    "key": "ArrowDown",
+    "caps": "ArrowDown",
+    "shift": "ArrowDown",
+    "capsAndShift": "ArrowDown"
+  },
+  "ArrowLeft": {
+    "key": "ArrowLeft",
+    "caps": "ArrowLeft",
+    "shift": "ArrowLeft",
+    "capsAndShift": "ArrowLeft"
+  },
+  "ArrowRight": {
+    "key": "ArrowRight",
+    "caps": "ArrowRight",
+    "shift": "ArrowRight",
+    "capsAndShift": "ArrowRight"
+  },
+  "Delete": {
+    "key": "Delete",
+    "caps": "Delete",
+    "shift": "Delete",
+    "capsAndShift": "Delete"
+  }
+}
