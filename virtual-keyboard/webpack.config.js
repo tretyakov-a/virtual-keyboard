@@ -2,11 +2,10 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const RemovePlugin = require("remove-files-webpack-plugin");
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const RemovePlugin = require('remove-files-webpack-plugin');
 
 module.exports = (env) => {
   const { mode = 'development' } = env;
@@ -14,13 +13,17 @@ module.exports = (env) => {
   const isProd = mode === 'production';
   const isDev = mode === 'development';
 
-  const fileName = ext => isDev ? `main.${ext}` : `main-[hash:8].${ext}`;
+  function getFileName(ext) {
+    return isDev
+      ? `main.${ext}`
+      : `main-[hash:8].${ext}`;
+  }
 
   const getStyleLoaders = () => [
     isProd
       ? MiniCssExtractPlugin.loader
       : 'style-loader',
-    'css-loader'
+    'css-loader',
   ];
 
   const getPlugins = () => {
@@ -29,7 +32,7 @@ module.exports = (env) => {
       new HtmlWebpackPlugin({
         minify: false,
         template: './index.ejs',
-        filename: 'index.html'
+        filename: 'index.html',
       }),
       new CopyPlugin({
         patterns: [
@@ -44,32 +47,30 @@ module.exports = (env) => {
           test: [
             {
               folder: 'dist/images',
-              method: (absoluteItemPath) => {
-                  return new RegExp(/fa-.*\.svg$/, 'm').test(absoluteItemPath);
-              },
-              recursive: true
-            }
-          ]
-        }
+              method: (absoluteItemPath) => /fa-.*\.svg$/m.test(absoluteItemPath),
+              recursive: true,
+            },
+          ],
+        },
       }),
     ];
     if (isProd) {
       plugins.push(
         new MiniCssExtractPlugin({
-          filename: fileName('css')
-        })
-      )
+          filename: getFileName('css'),
+        }),
+      );
     }
     return plugins;
   };
 
   return {
     context: path.resolve(__dirname, 'src'),
-    entry: ['./index.js'],
+    entry: ['./js/index.js'],
     output: {
-      filename: fileName('js'),
+      filename: getFileName('js'),
       path: path.resolve(__dirname, 'dist'),
-      publicPath: ''
+      publicPath: '',
     },
     mode: isProd ? 'production' : isDev && 'development',
     optimization: {
@@ -82,8 +83,8 @@ module.exports = (env) => {
             keep_classnames: true,
             keep_fnames: true,
           },
-        })
-      ]
+        }),
+      ],
     },
     target: 'web',
     devtool: 'source-map',
@@ -93,8 +94,8 @@ module.exports = (env) => {
       static: isDev,
       watchFiles: [
         './src/templates',
-        './src/index.ejs'
-      ]
+        './src/index.ejs',
+      ],
     },
     module: {
       rules: [
@@ -107,10 +108,10 @@ module.exports = (env) => {
               loader: 'babel-loader',
               options: {
                 presets: ['@babel/preset-env'],
-                sourceType: "unambiguous"
-              }
-            }
-          ]
+                sourceType: 'unambiguous',
+              },
+            },
+          ],
         },
         // Loading html
         {
@@ -120,53 +121,53 @@ module.exports = (env) => {
               loader: 'html-loader',
               options: {
                 esModule: false,
-                sources: true
-              }
-            }
-          ]
+                sources: true,
+              },
+            },
+          ],
         },
         // Loading images
         {
           test: /\.(jpg|png|svg|gif|ico|mp4)$/,
           type: 'asset/resource',
           generator: {
-            filename: 'images/[name]-[hash:8][ext]'
-          }
+            filename: 'images/[name]-[hash:8][ext]',
+          },
         },
         // Loading fonts
         {
           test: /\.(ttf|otf|eot|woff|woff2)$/,
           type: 'asset/resource',
           generator: {
-            filename: 'fonts/[name]-[hash:8][ext]'
-          }
+            filename: 'fonts/[name]-[hash:8][ext]',
+          },
         },
         // Loading scss/sass
         {
           test: /\.(s[ca]ss)$/,
           use: [
             ...getStyleLoaders(),
-            'sass-loader'
-          ]
+            'sass-loader',
+          ],
         },
         // Loading css
         {
           test: /\.css$/,
-          use: getStyleLoaders()
+          use: getStyleLoaders(),
         },
         // Loading .md
         {
           test: /\.(md)$/,
-          type: 'asset/source'
+          type: 'asset/source',
         },
         // Loading .ejs templates
         {
           test: /\.(ejs)/,
-          loader: 'ejs-compiled-loader'
-        }
-      ]
+          loader: 'ejs-compiled-loader',
+        },
+      ],
     },
 
-    plugins: getPlugins()
-  }
+    plugins: getPlugins(),
+  };
 };
