@@ -2,7 +2,7 @@ import { createElement } from './utils';
 
 class TextArea {
   constructor() {
-    this.el = createElement('textarea');
+    this.el = this.render();
     this.el.addEventListener('blur', this.handleTextBlur);
   }
 
@@ -41,7 +41,10 @@ class TextArea {
   }
 
   render() {
-    return this.el;
+    if (this.el) return this.el;
+
+    const el = createElement('textarea');
+    return el;
   }
 }
 
