@@ -84,6 +84,7 @@
     "capsAndShift": "й"
   },
   "KeyW": {
+    "key": "ц",
     "shift": "Ц",
     "caps": "Ц",
     "capsAndShift": "ц"
@@ -219,6 +220,12 @@
     "shift": "Э",
     "caps": "Э",
     "capsAndShift": "э"
+  },
+  "Enter": {
+    "key": "Enter",
+    "shift": "Enter",
+    "caps": "Enter",
+    "capsAndShift": "Enter"
   },
   "Slash": {
     "key": ".",
