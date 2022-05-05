@@ -2,6 +2,7 @@ import { createElement, areSetsEqual } from './utils';
 import ruKeys from './data/keys-ru.json';
 import enKeys from './data/keys-en.json';
 import keyboardLayout from './data/keyboard-layout.json';
+import hotKeys from './data/hotkeys.json';
 
 class Keyboard {
   constructor(textArea) {
@@ -11,24 +12,61 @@ class Keyboard {
     this.pressedKeys = new Set();
     this.pressedKeyCode = '';
     this.textArea = textArea;
-    this.operations = {
-      languageSwitch: {
-        keys: new Set(['AltLeft', 'ShiftLeft']),
-        fn: () => {
-          this.language = this.language === 'en' ? 'ru' : 'en';
-          this.currentKeySet = this.language === 'en' ? enKeys : ruKeys;
-          console.log('Language switched to ', this.language);
-        },
-      },
-    };
+    this.hotKeys = Object.keys(hotKeys).reduce((acc, key) => {
+      acc[key] = new Set(hotKeys[key]);
+      return acc;
+    }, {});
 
+    this.state = Keyboard.STATE.KEY;
+    this.isCapslock = false;
+    this.isShift = false;
     this.specialButtons = this.generateSpecialButtons();
+    this.changeableButtons = this.generateChangeableButtons();
     this.el = this.render();
     this.el.addEventListener('mousedown', this.handleKeyboardKeyDown);
     document.addEventListener('mouseup', this.handleKeyboardKeyUp);
 
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
+  }
+
+  set isShift(newValue) {
+    this._isShift = newValue;
+    this.toggleButtonOn(['ShiftLeft', 'ShiftRight'], newValue);
+  }
+
+  get isShift() {
+    return this._isShift;
+  }
+
+  set isCapslock(newValue) {
+    this._isCapslock = newValue;
+    this.toggleButtonOn(['CapsLock'], newValue);
+  }
+
+  get isCapslock() {
+    return this._isCapslock;
+  }
+
+  changeState() {
+    const { KEY, SHIFT, CAPSLOCK, CAPSANDSHIFT } = Keyboard.STATE;
+    this.state = (
+      ((this.isCapslock && this.isShift) && CAPSANDSHIFT)
+      || (this.isShift && SHIFT)
+      || (this.isCapslock && CAPSLOCK)
+      || KEY
+    );
+  }
+
+  toggleButtonOn(btnKeys, isOn) {
+    const method = isOn ? 'add' : 'remove';
+    btnKeys.forEach((key) => {
+      if (this.buttons[key]) {
+        this.buttons[key].classList[method]('button_on');
+      }
+    });
+    this.changeState();
+    this.updateButtons();
   }
 
   generateSpecialButtons() {
@@ -43,33 +81,20 @@ class Keyboard {
     }, new Set());
   }
 
-  space() {
-    this.textArea.addCh(' ');
+  generateChangeableButtons() {
+    return Object.keys(this.currentKeySet).filter((keyCode) => !this.specialButtons.has(keyCode));
   }
 
-  backspace() {
-    const { selection: { start, end }, value } = this.textArea;
-    if (start === end && start !== 0) {
-      this.textArea.value = value.slice(0, start - 1) + value.slice(end);
-      this.textArea.setCursor(start - 1);
-    } else {
-      this.textArea.deleteSelection();
-    }
-  }
+  shiftLeft() { this.isShift = !this.isShift; }
 
-  delete() {
-    const { selection: { start, end }, value } = this.textArea;
-    if (start === end && end !== 0) {
-      this.textArea.value = value.slice(0, start) + value.slice(end + 1);
-      this.textArea.setCursor(start);
-    } else {
-      this.textArea.deleteSelection();
-    }
-  }
+  shiftRight() { this.shiftLeft(); }
+
+  capsLock() { this.isCapslock = !this.isCapslock; }
 
   handleSpecialBtnPress = (keyCode) => {
     console.log('SPECIAL BTN PRESSED: ', keyCode);
     const fnName = keyCode[0].toLowerCase() + keyCode.slice(1);
+    if (this.textArea[fnName]) this.textArea[fnName]();
     if (this[fnName]) this[fnName]();
   };
 
@@ -78,31 +103,49 @@ class Keyboard {
         || !this.buttons[e.code]) {
       return;
     }
-
     const isSpecialBtnPressed = this.specialButtons.has(e.code);
     if ((e.isTrusted && !isSpecialBtnPressed) || e.key === 'Tab' || e.key === 'Alt') {
       e.preventDefault();
     }
-    const currentKey = this.currentKeySet[e.code];
     this.buttons[e.code].classList.add('button_active');
 
     this.pressedKeys.add(e.code);
+    if (this.handleHotkey()) {
+      return;
+    }
 
-    const ch = e.getModifierState('Shift') ? currentKey.shift : currentKey.key;
+    const ch = this.currentKeySet[e.code][this.state];
 
     if (isSpecialBtnPressed && !e.isTrusted) {
       this.handleSpecialBtnPress(e.code);
     } else if (!isSpecialBtnPressed) {
-      this.textArea.addCh(ch);
+      this.textArea.addText(ch);
     }
-
-    Object.keys(this.operations).forEach((key) => {
-      const op = this.operations[key];
-      if (areSetsEqual(this.pressedKeys, op.keys)) {
-        op.fn();
-      }
-    });
   };
+
+  updateButtons() {
+    if (!this.changeableButtons) {
+      return;
+    }
+    this.changeableButtons.forEach((btnKey) => {
+      this.buttons[btnKey].textContent = this.currentKeySet[btnKey][this.state];
+    });
+  }
+
+  languageSwitch() {
+    this.language = this.language === 'en' ? 'ru' : 'en';
+    this.currentKeySet = this.language === 'en' ? enKeys : ruKeys;
+    this.updateButtons();
+  }
+
+  handleHotkey() {
+    return Object.keys(this.hotKeys).some((opName) => {
+      const keys = this.hotKeys[opName];
+      const isEqual = areSetsEqual(this.pressedKeys, keys);
+      if (isEqual && this[opName] !== undefined) this[opName]();
+      return isEqual;
+    });
+  }
 
   handleKeyUp = (e) => {
     if (!this.buttons[e.code]) {
@@ -156,5 +199,12 @@ class Keyboard {
     return keyboard;
   }
 }
+
+Keyboard.STATE = {
+  KEY: 'key',
+  SHIFT: 'shift',
+  CAPSLOCK: 'caps',
+  CAPSANDSHIFT: 'capsAndShift'
+};
 
 export default Keyboard;
