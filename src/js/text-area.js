@@ -28,15 +28,67 @@ class TextArea {
     this.el.selectionEnd = position;
   }
 
-  addCh(ch) {
-    const { start, end } = this.selection;
-    this.el.value = this.el.value.slice(0, start) + ch + this.el.value.slice(end);
+  addText(text) {
+    const { selection: { start, end }, value } = this;
+    this.value = value.slice(0, start) + text + value.slice(end);
+    this.setCursor(start + text.length);
+  }
+
+  arrowLeft() {
+    const { selection: { start } } = this;
+    this.setCursor(start - 1);
+  }
+
+  arrowRight() {
+    const { selection: { start } } = this;
     this.setCursor(start + 1);
   }
 
+  arrowUp() {
+    const { selection: { start, end }, value } = this;
+    console.log(start, end, value);
+  }
+
+  arrowDown() {
+    const { selection: { start, end }, value } = this;
+    console.log(start, end, value);
+  }
+
+  enter() {
+    this.addText('\n');
+  }
+
+  tab() {
+    this.addText('    ');
+  }
+
+  space() {
+    this.addText(' ');
+  }
+
+  backspace() {
+    const { selection: { start, end }, value } = this;
+    if (start === end && start !== 0) {
+      this.value = value.slice(0, start - 1) + value.slice(end);
+      this.setCursor(start - 1);
+    } else {
+      this.deleteSelection();
+    }
+  }
+
+  delete() {
+    const { selection: { start, end }, value } = this;
+    if (start === end && end !== 0) {
+      this.value = value.slice(0, start) + value.slice(end + 1);
+      this.setCursor(start);
+    } else {
+      this.deleteSelection();
+    }
+  }
+
   deleteSelection() {
-    const { start, end } = this.selection;
-    this.el.value = this.el.value.slice(0, start) + this.el.value.slice(end);
+    const { selection: { start, end }, value } = this;
+    this.value = value.slice(0, start) + value.slice(end);
     this.setCursor(start);
   }
 
