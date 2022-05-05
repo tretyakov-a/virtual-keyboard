@@ -221,12 +221,6 @@
     "caps": "'",
     "capsAndShift": "\""
   },
-  "Enter": {
-    "key": "Enter",
-    "shift": "Enter",
-    "caps": "Enter",
-    "capsAndShift": "Enter"
-  },
   "KeyZ": {
     "key": "z",
     "shift": "Z",
@@ -286,113 +280,5 @@
     "shift": "?",
     "caps": "/",
     "capsAndShift": "?"
-  },
-  "Backspace": {
-    "key": "Backspace",
-    "shift": "Backspace",
-    "caps": "Backspace",
-    "capsAndShift": "Backspace"
-  },
-  "ShiftRight": {
-    "key": "Shift",
-    "caps": "Shift",
-    "shift": "Shift",
-    "capsAndShift": "Shift"
-  },
-  "CapsLock": {
-    "caps": "CapsLock",
-    "key": "CapsLock",
-    "capsAndShift": "CapsLock",
-    "shift": "CapsLock"
-  },
-  "ShiftLeft": {
-    "key": "Shift",
-    "shift": "Shift",
-    "caps": "Shift",
-    "capsAndShift": "Shift"
-  },
-  "Tab": {
-    "key": "Tab",
-    "shift": "Tab",
-    "caps": "Tab",
-    "capsAndShift": "Tab"
-  },
-  "ControlLeft": {
-    "key": "Control",
-    "caps": "Control",
-    "shift": "Control",
-    "capsAndShift": "Control"
-  },
-  "MetaLeft": {
-    "key": "Meta",
-    "caps": "Meta",
-    "shift": "Meta",
-    "capsAndShift": "Meta"
-  },
-  "AltLeft": {
-    "key": "Alt",
-    "caps": "Alt",
-    "shift": "Alt",
-    "capsAndShift": "Alt"
-  },
-  "Space": {
-    "key": " ",
-    "caps": " ",
-    "shift": " ",
-    "capsAndShift": " "
-  },
-  "AltRight": {
-    "key": "Alt",
-    "caps": "Alt",
-    "shift": "Alt",
-    "capsAndShift": "Alt"
-  },
-  "ContextMenu": {
-    "key": "ContextMenu",
-    "caps": "ContextMenu",
-    "shift": "ContextMenu",
-    "capsAndShift": "ContextMenu"
-  },
-  "ControlRight": {
-    "key": "Control",
-    "caps": "Control",
-    "shift": "Control",
-    "capsAndShift": "Control"
-  },
-  "MetaRight": {
-    "key": "Meta",
-    "caps": "Meta",
-    "shift": "Meta",
-    "capsAndShift": "Meta"
-  },
-  "ArrowUp": {
-    "key": "ArrowUp",
-    "caps": "ArrowUp",
-    "shift": "ArrowUp",
-    "capsAndShift": "ArrowUp"
-  },
-  "ArrowDown": {
-    "key": "ArrowDown",
-    "caps": "ArrowDown",
-    "shift": "ArrowDown",
-    "capsAndShift": "ArrowDown"
-  },
-  "ArrowLeft": {
-    "key": "ArrowLeft",
-    "caps": "ArrowLeft",
-    "shift": "ArrowLeft",
-    "capsAndShift": "ArrowLeft"
-  },
-  "ArrowRight": {
-    "key": "ArrowRight",
-    "caps": "ArrowRight",
-    "shift": "ArrowRight",
-    "capsAndShift": "ArrowRight"
-  },
-  "Delete": {
-    "key": "Delete",
-    "caps": "Delete",
-    "shift": "Delete",
-    "capsAndShift": "Delete"
   }
 }

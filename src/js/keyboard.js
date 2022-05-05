@@ -1,6 +1,7 @@
 import { createElement, areSetsEqual } from './utils';
 import ruKeys from './data/keys-ru.json';
 import enKeys from './data/keys-en.json';
+import commonKeys from './data/keys-common.json';
 import keyboardLayout from './data/keyboard-layout.json';
 import hotKeys from './data/hotkeys.json';
 
@@ -20,12 +21,12 @@ class Keyboard {
     this.state = Keyboard.STATE.KEY;
     this.isCapslock = false;
     this.isShift = false;
-    this.specialButtons = this.generateSpecialButtons();
-    this.changeableButtons = this.generateChangeableButtons();
+    this.specialButtons = new Set(Object.keys(commonKeys));
+    this.changeableButtons = Object.keys(enKeys);
     this.el = this.render();
-    this.el.addEventListener('mousedown', this.handleKeyboardKeyDown);
-    document.addEventListener('mouseup', this.handleKeyboardKeyUp);
 
+    this.el.addEventListener('mousedown', this.handleMouseDown);
+    document.addEventListener('mouseup', this.handleMouseUp);
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
   }
@@ -49,7 +50,9 @@ class Keyboard {
   }
 
   changeState() {
-    const { KEY, SHIFT, CAPSLOCK, CAPSANDSHIFT } = Keyboard.STATE;
+    const {
+      KEY, SHIFT, CAPSLOCK, CAPSANDSHIFT,
+    } = Keyboard.STATE;
     this.state = (
       ((this.isCapslock && this.isShift) && CAPSANDSHIFT)
       || (this.isShift && SHIFT)
@@ -69,25 +72,13 @@ class Keyboard {
     this.updateButtons();
   }
 
-  generateSpecialButtons() {
-    return Object.keys(this.currentKeySet).reduce((acc, keyCode) => {
-      const {
-        key, caps, shift, capsAndShift,
-      } = enKeys[keyCode];
-      if (key === caps && key === shift && key === capsAndShift) {
-        acc.add(keyCode);
-      }
-      return acc;
-    }, new Set());
+  shiftLeft() {
+    this.isShift = !this.isShift;
   }
 
-  generateChangeableButtons() {
-    return Object.keys(this.currentKeySet).filter((keyCode) => !this.specialButtons.has(keyCode));
+  shiftRight() {
+    this.shiftLeft();
   }
-
-  shiftLeft() { this.isShift = !this.isShift; }
-
-  shiftRight() { this.shiftLeft(); }
 
   capsLock() { this.isCapslock = !this.isCapslock; }
 
@@ -110,15 +101,15 @@ class Keyboard {
     this.buttons[e.code].classList.add('button_active');
 
     this.pressedKeys.add(e.code);
+
     if (this.handleHotkey()) {
       return;
     }
 
-    const ch = this.currentKeySet[e.code][this.state];
-
     if (isSpecialBtnPressed && !e.isTrusted) {
       this.handleSpecialBtnPress(e.code);
     } else if (!isSpecialBtnPressed) {
+      const ch = this.currentKeySet[e.code][this.state];
       this.textArea.addText(ch);
     }
   };
@@ -148,14 +139,15 @@ class Keyboard {
   }
 
   handleKeyUp = (e) => {
-    if (!this.buttons[e.code]) {
+    const btn = this.buttons[e.code];
+    if (!btn) {
       return;
     }
-    this.buttons[e.code].classList.remove('button_active');
+    btn.classList.remove('button_active');
     this.pressedKeys.delete(e.code);
   };
 
-  handleKeyboardKeyDown = (e) => {
+  handleMouseDown = (e) => {
     e.preventDefault();
     const btn = e.target.closest('.button');
     if (btn) {
@@ -165,7 +157,7 @@ class Keyboard {
     }
   };
 
-  handleKeyboardKeyUp = (e) => {
+  handleMouseUp = (e) => {
     e.preventDefault();
     const btn = e.target.closest('.button');
 
@@ -185,12 +177,18 @@ class Keyboard {
     keyboardLayout.forEach((layoutRow) => {
       const row = createElement('div', `${className}__row`);
       layoutRow.forEach((keyCode) => {
+        const isSpecialBtn = this.specialButtons.has(keyCode);
+        const value = isSpecialBtn
+          ? commonKeys[keyCode].special
+          : this.currentKeySet[keyCode].key;
         const button = createElement('div', 'button');
-        if (this.specialButtons.has(keyCode)) {
-          button.classList.add(`button_${keyCode.toLowerCase()}`);
-        }
         button.setAttribute('data-code', keyCode);
-        button.textContent = this.currentKeySet[keyCode].key;
+        if (isSpecialBtn) {
+          button.classList.add(`button_${keyCode.toLowerCase()}`);
+          button.innerHTML = value;
+        } else {
+          button.textContent = value;
+        }
         this.buttons[keyCode] = button;
         row.append(button);
       });
@@ -204,7 +202,7 @@ Keyboard.STATE = {
   KEY: 'key',
   SHIFT: 'shift',
   CAPSLOCK: 'caps',
-  CAPSANDSHIFT: 'capsAndShift'
+  CAPSANDSHIFT: 'capsAndShift',
 };
 
 export default Keyboard;

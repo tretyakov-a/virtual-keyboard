@@ -11,9 +11,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'class-methods-use-this': false,
-    'no-underscore-dangle': {
-      allowAfterThis: true,
-    },
+    'class-methods-use-this': 0,
+    'no-underscore-dangle': [2, { allowAfterThis: true }],
   },
 };
