@@ -21,8 +21,13 @@ class Keyboard {
     this.state = Keyboard.STATE.KEY;
     this.isCapslock = false;
     this.isShift = false;
+    this.repeatTimer = null;
     this.specialButtons = new Set(Object.keys(commonKeys));
     this.changeableButtons = Object.keys(enKeys);
+    this.repeatableButtons = new Set([
+      ...Object.keys(commonKeys).filter((key) => commonKeys[key].repeatable),
+      ...Object.keys(this.currentKeySet),
+    ]);
     this.el = this.render();
 
     this.el.addEventListener('mousedown', this.handleMouseDown);
@@ -89,15 +94,24 @@ class Keyboard {
     if (this[fnName]) this[fnName]();
   };
 
+  isBtnSpecial(code) {
+    return this.specialButtons.has(code);
+  }
+
+  isBtnRepeatable(code) {
+    return this.repeatableButtons.has(code);
+  }
+
   handleKeyDown = (e) => {
-    if ((e.isTrusted && document.activeElement !== this.textArea.render())
-        || !this.buttons[e.code]) {
+    if ((e.isTrusted && !this.textArea.isFocused()) || !this.buttons[e.code]) {
       return;
     }
-    const isSpecialBtnPressed = this.specialButtons.has(e.code);
-    if ((e.isTrusted && !isSpecialBtnPressed) || e.key === 'Tab' || e.key === 'Alt') {
-      e.preventDefault();
+    e.preventDefault();
+    const isSpecial = this.isBtnSpecial(e.code);
+    if (e.repeat && isSpecial && !this.isBtnRepeatable(e.code)) {
+      return;
     }
+
     this.buttons[e.code].classList.add('button_active');
 
     this.pressedKeys.add(e.code);
@@ -106,9 +120,9 @@ class Keyboard {
       return;
     }
 
-    if (isSpecialBtnPressed && !e.isTrusted) {
+    if (isSpecial) {
       this.handleSpecialBtnPress(e.code);
-    } else if (!isSpecialBtnPressed) {
+    } else {
       const ch = this.currentKeySet[e.code][this.state];
       this.textArea.addText(ch);
     }
@@ -147,20 +161,30 @@ class Keyboard {
     this.pressedKeys.delete(e.code);
   };
 
+  repeatBtn(code, delay) {
+    this.repeatTimer = setTimeout(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { code, repeat: true }));
+      this.repeatBtn(code, Keyboard.REPEAT.PERIOD);
+    }, delay);
+  }
+
   handleMouseDown = (e) => {
     e.preventDefault();
+    this.textArea.el.focus();
     const btn = e.target.closest('.button');
     if (btn) {
       const { code } = btn.dataset;
       this.pressedKeyCode = code;
       document.dispatchEvent(new KeyboardEvent('keydown', { code }));
+      if (this.isBtnRepeatable(code)) {
+        this.repeatBtn(code, Keyboard.REPEAT.DELAY);
+      }
     }
   };
 
   handleMouseUp = (e) => {
-    e.preventDefault();
+    clearTimeout(this.repeatTimer);
     const btn = e.target.closest('.button');
-
     const code = (btn && (this.pressedKeyCode !== btn.dataset.code)) || !btn
       ? this.pressedKeyCode
       : btn.dataset.code;
@@ -177,13 +201,13 @@ class Keyboard {
     keyboardLayout.forEach((layoutRow) => {
       const row = createElement('div', `${className}__row`);
       layoutRow.forEach((keyCode) => {
-        const isSpecialBtn = this.specialButtons.has(keyCode);
-        const value = isSpecialBtn
+        const isSpecial = this.isBtnSpecial(keyCode);
+        const value = isSpecial
           ? commonKeys[keyCode].special
           : this.currentKeySet[keyCode].key;
         const button = createElement('div', 'button');
         button.setAttribute('data-code', keyCode);
-        if (isSpecialBtn) {
+        if (isSpecial) {
           button.classList.add(`button_${keyCode.toLowerCase()}`);
           button.innerHTML = value;
         } else {
@@ -203,6 +227,11 @@ Keyboard.STATE = {
   SHIFT: 'shift',
   CAPSLOCK: 'caps',
   CAPSANDSHIFT: 'capsAndShift',
+};
+
+Keyboard.REPEAT = {
+  DELAY: 200,
+  PERIOD: 40,
 };
 
 export default Keyboard;
