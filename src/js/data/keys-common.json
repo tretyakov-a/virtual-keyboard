@@ -4,132 +4,151 @@
     "shift": "Enter",
     "caps": "Enter",
     "capsAndShift": "Enter",
-    "special": "&#9166; Enter"
+    "special": "&#9166; Enter",
+    "repeatable": true
   },
   "Backspace": {
     "key": "Backspace",
     "shift": "Backspace",
     "caps": "Backspace",
     "capsAndShift": "Backspace",
-    "special": "&#9003; Backspace"
-  },
-  "ShiftRight": {
-    "key": "Shift",
-    "caps": "Shift",
-    "shift": "Shift",
-    "capsAndShift": "Shift",
-    "special": "&#8679; Shift"
-  },
-  "CapsLock": {
-    "caps": "CapsLock",
-    "key": "CapsLock",
-    "capsAndShift": "CapsLock",
-    "shift": "CapsLock",
-    "special": "&#127280; Caps Lock"
+    "special": "&#9003; Backspace",
+    "repeatable": true
   },
   "ShiftLeft": {
     "key": "Shift",
     "shift": "Shift",
     "caps": "Shift",
     "capsAndShift": "Shift",
-    "special": "&#8679; Shift"
+    "special": "&#8679; Shift",
+    "repeatable": false
+  },
+  "ShiftRight": {
+    "key": "Shift",
+    "caps": "Shift",
+    "shift": "Shift",
+    "capsAndShift": "Shift",
+    "special": "&#8679; Shift",
+    "repeatable": false
+  },
+  "CapsLock": {
+    "caps": "CapsLock",
+    "key": "CapsLock",
+    "capsAndShift": "CapsLock",
+    "shift": "CapsLock",
+    "special": "&#127280; Caps Lock",
+    "repeatable": false
   },
   "Tab": {
     "key": "Tab",
     "shift": "Tab",
     "caps": "Tab",
     "capsAndShift": "Tab",
-    "special": "Tab &#11134;"
+    "special": "&#11134; Tab",
+    "repeatable": true
   },
   "Space": {
     "key": " ",
     "caps": " ",
     "shift": " ",
     "capsAndShift": " ",
-    "special": ""
+    "special": "",
+    "repeatable": true
   },
   "AltLeft": {
     "key": "Alt",
     "caps": "Alt",
     "shift": "Alt",
     "capsAndShift": "Alt",
-    "special": "Alt"
+    "special": "Alt",
+    "repeatable": false
   },
   "AltRight": {
     "key": "Alt",
     "caps": "Alt",
     "shift": "Alt",
     "capsAndShift": "Alt",
-    "special": "Alt"
+    "special": "Alt",
+    "repeatable": false
   },
   "ContextMenu": {
     "key": "ContextMenu",
     "caps": "ContextMenu",
     "shift": "ContextMenu",
     "capsAndShift": "ContextMenu",
-    "special": "&#9636;"
+    "special": "&#9636;",
+    "repeatable": false
   },
   "ControlLeft": {
     "key": "Control",
     "caps": "Control",
     "shift": "Control",
     "capsAndShift": "Control",
-    "special": "Ctrl"
+    "special": "Ctrl",
+    "repeatable": false
   },
   "ControlRight": {
     "key": "Control",
     "caps": "Control",
     "shift": "Control",
     "capsAndShift": "Control",
-    "special": "Ctrl"
+    "special": "Ctrl",
+    "repeatable": false
   },
   "MetaLeft": {
     "key": "Meta",
     "caps": "Meta",
     "shift": "Meta",
     "capsAndShift": "Meta",
-    "special": "&#8984;"
+    "special": "&#8984;",
+    "repeatable": false
   },
   "MetaRight": {
     "key": "Meta",
     "caps": "Meta",
     "shift": "Meta",
     "capsAndShift": "Meta",
-    "special": "&#8984;"
+    "special": "&#8984;",
+    "repeatable": false
   },
   "ArrowUp": {
     "key": "ArrowUp",
     "caps": "ArrowUp",
     "shift": "ArrowUp",
     "capsAndShift": "ArrowUp",
-    "special": "&#9650;"
+    "special": "&#9650;",
+    "repeatable": true
   },
   "ArrowDown": {
     "key": "ArrowDown",
     "caps": "ArrowDown",
     "shift": "ArrowDown",
     "capsAndShift": "ArrowDown",
-    "special": "&#9660;"
+    "special": "&#9660;",
+    "repeatable": true
   },
   "ArrowLeft": {
     "key": "ArrowLeft",
     "caps": "ArrowLeft",
     "shift": "ArrowLeft",
     "capsAndShift": "ArrowLeft",
-    "special": "&#9664;"
+    "special": "&#9664;",
+    "repeatable": true
   },
   "ArrowRight": {
     "key": "ArrowRight",
     "caps": "ArrowRight",
     "shift": "ArrowRight",
     "capsAndShift": "ArrowRight",
-    "special": "&#9654;"
+    "special": "&#9654;",
+    "repeatable": true
   },
   "Delete": {
     "key": "Delete",
     "caps": "Delete",
     "shift": "Delete",
     "capsAndShift": "Delete",
-    "special": "&#8998; Del"
+    "special": "&#8998; Del",
+    "repeatable": true
   }
 }
