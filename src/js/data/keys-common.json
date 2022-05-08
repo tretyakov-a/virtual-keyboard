@@ -1,154 +1,78 @@
 {
-  "Enter": {
-    "key": "Enter",
-    "shift": "Enter",
-    "caps": "Enter",
-    "capsAndShift": "Enter",
-    "special": "&#9166; Enter",
+  "Enter": {    
+    "value": "&#9166; Enter",
     "repeatable": true
   },
-  "Backspace": {
-    "key": "Backspace",
-    "shift": "Backspace",
-    "caps": "Backspace",
-    "capsAndShift": "Backspace",
-    "special": "&#9003; Backspace",
+  "Backspace": {    
+    "value": "&#9003; Backspace",
     "repeatable": true
   },
-  "ShiftLeft": {
-    "key": "Shift",
-    "shift": "Shift",
-    "caps": "Shift",
-    "capsAndShift": "Shift",
-    "special": "&#8679; Shift",
+  "ShiftLeft": {    
+    "value": "&#8679; Shift",
     "repeatable": false
   },
-  "ShiftRight": {
-    "key": "Shift",
-    "caps": "Shift",
-    "shift": "Shift",
-    "capsAndShift": "Shift",
-    "special": "&#8679; Shift",
+  "ShiftRight": {    
+    "value": "&#8679; Shift",
     "repeatable": false
   },
-  "CapsLock": {
-    "caps": "CapsLock",
-    "key": "CapsLock",
-    "capsAndShift": "CapsLock",
-    "shift": "CapsLock",
-    "special": "&#127280; Caps Lock",
+  "CapsLock": {    
+    "value": "&#127280; Caps Lock",
     "repeatable": false
   },
-  "Tab": {
-    "key": "Tab",
-    "shift": "Tab",
-    "caps": "Tab",
-    "capsAndShift": "Tab",
-    "special": "&#11134; Tab",
+  "Tab": {    
+    "value": "&#11134; Tab",
     "repeatable": true
   },
-  "Space": {
-    "key": " ",
-    "caps": " ",
-    "shift": " ",
-    "capsAndShift": " ",
-    "special": "",
+  "Space": {    
+    "value": "",
     "repeatable": true
   },
-  "AltLeft": {
-    "key": "Alt",
-    "caps": "Alt",
-    "shift": "Alt",
-    "capsAndShift": "Alt",
-    "special": "Alt",
+  "AltLeft": {    
+    "value": "Alt",
     "repeatable": false
   },
-  "AltRight": {
-    "key": "Alt",
-    "caps": "Alt",
-    "shift": "Alt",
-    "capsAndShift": "Alt",
-    "special": "Alt",
+  "AltRight": {    
+    "value": "Alt",
     "repeatable": false
   },
-  "ContextMenu": {
-    "key": "ContextMenu",
-    "caps": "ContextMenu",
-    "shift": "ContextMenu",
-    "capsAndShift": "ContextMenu",
-    "special": "&#9636;",
+  "ContextMenu": {    
+    "value": "&#9636;",
     "repeatable": false
   },
-  "ControlLeft": {
-    "key": "Control",
-    "caps": "Control",
-    "shift": "Control",
-    "capsAndShift": "Control",
-    "special": "Ctrl",
+  "ControlLeft": {    
+    "value": "Ctrl",
     "repeatable": false
   },
-  "ControlRight": {
-    "key": "Control",
-    "caps": "Control",
-    "shift": "Control",
-    "capsAndShift": "Control",
-    "special": "Ctrl",
+  "ControlRight": {    
+    "value": "Ctrl",
     "repeatable": false
   },
-  "MetaLeft": {
-    "key": "Meta",
-    "caps": "Meta",
-    "shift": "Meta",
-    "capsAndShift": "Meta",
-    "special": "&#8984;",
+  "MetaLeft": {    
+    "value": "&#8984;",
     "repeatable": false
   },
-  "MetaRight": {
-    "key": "Meta",
-    "caps": "Meta",
-    "shift": "Meta",
-    "capsAndShift": "Meta",
-    "special": "&#8984;",
+  "MetaRight": {    
+    "value": "&#8984;",
     "repeatable": false
   },
-  "ArrowUp": {
-    "key": "ArrowUp",
-    "caps": "ArrowUp",
-    "shift": "ArrowUp",
-    "capsAndShift": "ArrowUp",
-    "special": "&#9650;",
+  "ArrowUp": {    
+    "value": "&#9650;",
     "repeatable": true
   },
-  "ArrowDown": {
-    "key": "ArrowDown",
-    "caps": "ArrowDown",
-    "shift": "ArrowDown",
-    "capsAndShift": "ArrowDown",
-    "special": "&#9660;",
+  "ArrowDown": {    
+    "value": "&#9660;",
     "repeatable": true
   },
-  "ArrowLeft": {
-    "key": "ArrowLeft",
-    "caps": "ArrowLeft",
-    "shift": "ArrowLeft",
-    "capsAndShift": "ArrowLeft",
-    "special": "&#9664;",
+  "ArrowLeft": {    
+    "value": "&#9664;",
     "repeatable": true
   },
-  "ArrowRight": {
-    "key": "ArrowRight",
-    "caps": "ArrowRight",
-    "shift": "ArrowRight",
-    "capsAndShift": "ArrowRight",
-    "special": "&#9654;",
+  "ArrowRight": {    
+    "value": "&#9654;",
     "repeatable": true
   },
-  "Delete": {
-    "key": "Delete",
-    "caps": "Delete",
-    "shift": "Delete",
-    "capsAndShift": "Delete",
-    "special": "&#8998; Del",
+  "Delete": {    
+    "value": "&#8998; Del",
     "repeatable": true
   }
 }
