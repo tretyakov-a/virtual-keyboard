@@ -4,10 +4,12 @@ import enKeys from './data/keys-en.json';
 import commonKeys from './data/keys-common.json';
 import keyboardLayout from './data/keyboard-layout.json';
 import hotKeys from './data/hotkeys.json';
+import Key from './key';
 
 class Keyboard {
   constructor(textArea) {
-    this.buttons = {};
+    this.keys = {};
+    this.class = 'keyboard';
     this.language = 'en';
     this.currentKeySet = enKeys;
     this.pressedKeys = new Set();
@@ -22,12 +24,7 @@ class Keyboard {
     this.isCapslock = false;
     this.isShift = false;
     this.repeatTimer = null;
-    this.specialButtons = new Set(Object.keys(commonKeys));
-    this.changeableButtons = Object.keys(enKeys);
-    this.repeatableButtons = new Set([
-      ...Object.keys(commonKeys).filter((key) => commonKeys[key].repeatable),
-      ...Object.keys(this.currentKeySet),
-    ]);
+
     this.el = this.render();
 
     this.el.addEventListener('mousedown', this.handleMouseDown);
@@ -67,10 +64,9 @@ class Keyboard {
   }
 
   toggleButtonOn(btnKeys, isOn) {
-    const method = isOn ? 'add' : 'remove';
     btnKeys.forEach((key) => {
-      if (this.buttons[key]) {
-        this.buttons[key].classList[method]('button_on');
+      if (this.keys[key]) {
+        this.keys[key].setState(Key.STATE.ON, isOn);
       }
     });
     this.changeState();
@@ -85,55 +81,46 @@ class Keyboard {
     this.shiftLeft();
   }
 
-  capsLock() { this.isCapslock = !this.isCapslock; }
+  capsLock() {
+    this.isCapslock = !this.isCapslock;
+  }
 
   handleSpecialBtnPress = (keyCode) => {
-    console.log('SPECIAL BTN PRESSED: ', keyCode);
     const fnName = keyCode[0].toLowerCase() + keyCode.slice(1);
     if (this.textArea[fnName]) this.textArea[fnName]();
     if (this[fnName]) this[fnName]();
   };
 
-  isBtnSpecial(code) {
-    return this.specialButtons.has(code);
-  }
-
-  isBtnRepeatable(code) {
-    return this.repeatableButtons.has(code);
-  }
-
   handleKeyDown = (e) => {
-    if ((e.isTrusted && !this.textArea.isFocused()) || !this.buttons[e.code]) {
+    const keyCode = e.code;
+    const key = this.keys[keyCode];
+    if ((e.isTrusted && !this.textArea.isFocused())
+        || !key
+        || (e.repeat && key.isSpecial && !key.isRepeatable)) {
       return;
     }
     e.preventDefault();
-    const isSpecial = this.isBtnSpecial(e.code);
-    if (e.repeat && isSpecial && !this.isBtnRepeatable(e.code)) {
-      return;
-    }
 
-    this.buttons[e.code].classList.add('button_active');
-
-    this.pressedKeys.add(e.code);
+    key.setState(Key.STATE.ACTIVE, true);
+    this.pressedKeys.add(keyCode);
 
     if (this.handleHotkey()) {
       return;
     }
 
-    if (isSpecial) {
-      this.handleSpecialBtnPress(e.code);
+    if (key.isSpecial) {
+      this.handleSpecialBtnPress(keyCode);
     } else {
-      const ch = this.currentKeySet[e.code][this.state];
-      this.textArea.addText(ch);
+      this.textArea.addText(key.getValue());
     }
   };
 
   updateButtons() {
-    if (!this.changeableButtons) {
+    if (!Object.keys(this.keys).length) {
       return;
     }
-    this.changeableButtons.forEach((btnKey) => {
-      this.buttons[btnKey].textContent = this.currentKeySet[btnKey][this.state];
+    Object.keys(this.currentKeySet).forEach((keyCode) => {
+      this.keys[keyCode].setValue(this);
     });
   }
 
@@ -153,11 +140,11 @@ class Keyboard {
   }
 
   handleKeyUp = (e) => {
-    const btn = this.buttons[e.code];
+    const btn = this.keys[e.code];
     if (!btn) {
       return;
     }
-    btn.classList.remove('button_active');
+    btn.setState(Key.STATE.ACTIVE, false);
     this.pressedKeys.delete(e.code);
   };
 
@@ -176,7 +163,7 @@ class Keyboard {
       const { code } = btn.dataset;
       this.pressedKeyCode = code;
       document.dispatchEvent(new KeyboardEvent('keydown', { code }));
-      if (this.isBtnRepeatable(code)) {
+      if (this.keys[code].isRepeatable) {
         this.repeatBtn(code, Keyboard.REPEAT.DELAY);
       }
     }
@@ -185,7 +172,8 @@ class Keyboard {
   handleMouseUp = (e) => {
     clearTimeout(this.repeatTimer);
     const btn = e.target.closest('.button');
-    const code = (btn && (this.pressedKeyCode !== btn.dataset.code)) || !btn
+    const isMouseUpOutside = this.pressedKeyCode !== btn.dataset.code;
+    const code = (btn && isMouseUpOutside) || !btn
       ? this.pressedKeyCode
       : btn.dataset.code;
 
@@ -195,26 +183,26 @@ class Keyboard {
 
   render() {
     if (this.el) return this.el;
-    const className = 'keyboard';
-    const keyboard = createElement('div', className);
+    const keyboard = createElement('div', this.class);
+    const commonKeysSet = new Set(Object.keys(commonKeys));
+    const repeatableKeysSet = new Set([
+      ...Object.keys(commonKeys).filter((key) => commonKeys[key].repeatable),
+      ...Object.keys(this.currentKeySet),
+    ]);
 
     keyboardLayout.forEach((layoutRow) => {
-      const row = createElement('div', `${className}__row`);
+      const row = createElement('div', `${this.class}__row`);
       layoutRow.forEach((keyCode) => {
-        const isSpecial = this.isBtnSpecial(keyCode);
-        const value = isSpecial
-          ? commonKeys[keyCode].special
-          : this.currentKeySet[keyCode].key;
-        const button = createElement('div', 'button');
-        button.setAttribute('data-code', keyCode);
-        if (isSpecial) {
-          button.classList.add(`button_${keyCode.toLowerCase()}`);
-          button.innerHTML = value;
-        } else {
-          button.textContent = value;
-        }
-        this.buttons[keyCode] = button;
-        row.append(button);
+        const isSpecial = commonKeysSet.has(keyCode);
+        const key = new Key({
+          code: keyCode,
+          isSpecial,
+          isRepeatable: repeatableKeysSet.has(keyCode),
+          ru: isSpecial ? commonKeys[keyCode] : ruKeys[keyCode],
+          en: isSpecial ? commonKeys[keyCode] : enKeys[keyCode],
+        }).setValue(this);
+        this.keys[keyCode] = key;
+        row.append(key.render());
       });
       keyboard.append(row);
     });
