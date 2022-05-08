@@ -9,11 +9,15 @@
   },
   "ShiftLeft": {    
     "value": "&#8679; Shift",
-    "repeatable": false
+    "repeatable": false,
+    "command": true,
+    "commandKey": "shiftKey"
   },
   "ShiftRight": {    
     "value": "&#8679; Shift",
-    "repeatable": false
+    "repeatable": false,
+    "command": true,
+    "commandKey": "shiftKey"
   },
   "CapsLock": {    
     "value": "&#127280; Caps Lock",
@@ -29,11 +33,15 @@
   },
   "AltLeft": {    
     "value": "Alt",
-    "repeatable": false
+    "repeatable": false,
+    "command": true,
+    "commandKey": "altKey"
   },
   "AltRight": {    
     "value": "Alt",
-    "repeatable": false
+    "repeatable": false,
+    "command": true,
+    "commandKey": "altKey"
   },
   "ContextMenu": {    
     "value": "&#9636;",
@@ -41,11 +49,15 @@
   },
   "ControlLeft": {    
     "value": "Ctrl",
-    "repeatable": false
+    "repeatable": false,
+    "command": true,
+    "commandKey": "ctrlKey"
   },
   "ControlRight": {    
     "value": "Ctrl",
-    "repeatable": false
+    "repeatable": false,
+    "command": true,
+    "commandKey": "ctrlKey"
   },
   "MetaLeft": {    
     "value": "&#8984;",
