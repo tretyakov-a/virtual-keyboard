@@ -13,13 +13,14 @@ class Keyboard {
     this.language = 'en';
     this.currentKeySet = enKeys;
     this.pressedKeys = new Set();
+    this.pressedCommandKeys = new Set();
     this.pressedKeyCode = '';
     this.textArea = textArea;
     this.hotKeys = Object.keys(hotKeys).reduce((acc, key) => {
       acc[key] = new Set(hotKeys[key]);
       return acc;
     }, {});
-
+    this.commandKeys = Object.keys(commonKeys).filter((key) => commonKeys[key].command);
     this.state = Keyboard.STATE.KEY;
     this.isCapslock = false;
     this.isShift = false;
@@ -35,7 +36,7 @@ class Keyboard {
 
   set isShift(newValue) {
     this._isShift = newValue;
-    this.toggleButtonOn(['ShiftLeft', 'ShiftRight'], newValue);
+    this.changeState();
   }
 
   get isShift() {
@@ -45,6 +46,7 @@ class Keyboard {
   set isCapslock(newValue) {
     this._isCapslock = newValue;
     this.toggleButtonOn(['CapsLock'], newValue);
+    this.changeState();
   }
 
   get isCapslock() {
@@ -61,6 +63,7 @@ class Keyboard {
       || (this.isCapslock && CAPSLOCK)
       || KEY
     );
+    this.updateButtons();
   }
 
   toggleButtonOn(btnKeys, isOn) {
@@ -69,50 +72,118 @@ class Keyboard {
         this.keys[key].setState(Key.STATE.ON, isOn);
       }
     });
-    this.changeState();
-    this.updateButtons();
   }
 
-  shiftLeft() {
-    this.isShift = !this.isShift;
+  shiftLeft(value) {
+    this.isShift = value;
   }
 
-  shiftRight() {
-    this.shiftLeft();
+  shiftRight(value) {
+    this.shiftLeft(value);
   }
 
   capsLock() {
     this.isCapslock = !this.isCapslock;
   }
 
-  handleSpecialBtnPress = (keyCode) => {
-    const fnName = keyCode[0].toLowerCase() + keyCode.slice(1);
+  toggleCommandBtn(code, value) {
+    const prop = `is${code}`;
+    this[prop] = value === undefined ? !this[prop] : value;
+    this.keys[code].setState(Key.STATE.ACTIVE, this[prop]);
+    return this[prop];
+  }
+
+  handleSpecialBtnDown({ code }) {
+    const fnName = code[0].toLowerCase() + code.slice(1);
     if (this.textArea[fnName]) this.textArea[fnName]();
     if (this[fnName]) this[fnName]();
-  };
+  }
+
+  handleCommandBtnDown({ code, isTrusted }) {
+    const { commandKey } = commonKeys[code];
+    const fnName = code[0].toLowerCase() + code.slice(1);
+    if (this[fnName]) this[fnName](true);
+    if (isTrusted) {
+      this.pressedCommandKeys.add(commandKey);
+    } else if (!this.toggleCommandBtn(code)) {
+      this.pressedCommandKeys.delete(commandKey);
+      if (this[fnName]) this[fnName](false);
+    } else {
+      this.pressedCommandKeys.add(commandKey);
+    }
+  }
+
+  handleCommandBtnUp({ code, isTrusted }) {
+    const { commandKey } = commonKeys[code];
+    const fnName = code[0].toLowerCase() + code.slice(1);
+    if (isTrusted) {
+      this.pressedCommandKeys.delete(commandKey);
+      if (this[fnName]) this[fnName](false);
+    }
+  }
+
+  clearCommandKeys({ isTrusted }) {
+    if (!isTrusted) {
+      this.pressedCommandKeys.clear();
+      this.commandKeys.forEach((code) => {
+        const fnName = code[0].toLowerCase() + code.slice(1);
+        if (this[fnName]) this[fnName](false);
+        this.toggleCommandBtn(code, false);
+      });
+    }
+  }
 
   handleKeyDown = (e) => {
-    const keyCode = e.code;
-    const key = this.keys[keyCode];
-    if ((e.isTrusted && !this.textArea.isFocused())
-        || !key
-        || (e.repeat && key.isSpecial && !key.isRepeatable)) {
+    if (e.isTrusted && !this.textArea.isFocused()) {
       return;
     }
     e.preventDefault();
-
-    key.setState(Key.STATE.ACTIVE, true);
-    this.pressedKeys.add(keyCode);
-
-    if (this.handleHotkey()) {
+    const key = this.keys[e.code];
+    if (!key || (e.repeat && key.isSpecial && !key.isRepeatable)) {
       return;
     }
 
-    if (key.isSpecial) {
-      this.handleSpecialBtnPress(keyCode);
+    key.setState(Key.STATE.ACTIVE, true);
+
+    if (key.isCommand) {
+      this.handleCommandBtnDown(e);
+
+      if (this.handleHotkey(e)) {
+        this.clearCommandKeys(e);
+      }
     } else {
-      this.textArea.addText(key.getValue());
+      const cmdsNumber = this.pressedCommandKeys.size;
+      if (!this.handleHotkey(e) && (!cmdsNumber || (cmdsNumber === 1 && this.isShift))) {
+        if (key.isSpecial) {
+          this.handleSpecialBtnDown(e);
+        } else {
+          this.textArea.addText(key.getValue());
+        }
+      }
+      this.clearCommandKeys(e);
     }
+  };
+
+  handleKeyUp = (e) => {
+    if (e.isTrusted && !this.textArea.isFocused()) {
+      return;
+    }
+    e.preventDefault();
+    const key = this.keys[e.code];
+    if (!key || (e.repeat && key.isSpecial && !key.isRepeatable)) {
+      return;
+    }
+
+    if (e.isTrusted) {
+      key.setState(Key.STATE.ACTIVE, false);
+    }
+
+    if (key.isCommand) {
+      this.handleCommandBtnUp(e);
+      return;
+    }
+
+    key.setState(Key.STATE.ACTIVE, false);
   };
 
   updateButtons() {
@@ -130,23 +201,22 @@ class Keyboard {
     this.updateButtons();
   }
 
-  handleHotkey() {
+  handleHotkey({ code }) {
+    const lastKey = this.keys[code];
+    const keysForCompare = new Set(this.pressedCommandKeys);
+    if (!lastKey.isCommand) {
+      keysForCompare.add(code);
+    }
     return Object.keys(this.hotKeys).some((opName) => {
       const keys = this.hotKeys[opName];
-      const isEqual = areSetsEqual(this.pressedKeys, keys);
-      if (isEqual && this[opName] !== undefined) this[opName]();
+      if (lastKey.isCommand && !keys.has(commonKeys[code].commandKey)) {
+        return false;
+      }
+      const isEqual = areSetsEqual(keysForCompare, keys);
+      if (isEqual && this[opName] !== undefined) this[opName](code);
       return isEqual;
     });
   }
-
-  handleKeyUp = (e) => {
-    const btn = this.keys[e.code];
-    if (!btn) {
-      return;
-    }
-    btn.setState(Key.STATE.ACTIVE, false);
-    this.pressedKeys.delete(e.code);
-  };
 
   repeatBtn(code, delay) {
     this.repeatTimer = setTimeout(() => {
@@ -172,6 +242,7 @@ class Keyboard {
   handleMouseUp = (e) => {
     clearTimeout(this.repeatTimer);
     const btn = e.target.closest('.button');
+    if (!btn) return;
     const isMouseUpOutside = this.pressedKeyCode !== btn.dataset.code;
     const code = (btn && isMouseUpOutside) || !btn
       ? this.pressedKeyCode
@@ -184,20 +255,15 @@ class Keyboard {
   render() {
     if (this.el) return this.el;
     const keyboard = createElement('div', this.class);
-    const commonKeysSet = new Set(Object.keys(commonKeys));
-    const repeatableKeysSet = new Set([
-      ...Object.keys(commonKeys).filter((key) => commonKeys[key].repeatable),
-      ...Object.keys(this.currentKeySet),
-    ]);
-
     keyboardLayout.forEach((layoutRow) => {
       const row = createElement('div', `${this.class}__row`);
       layoutRow.forEach((keyCode) => {
-        const isSpecial = commonKeysSet.has(keyCode);
+        const isSpecial = commonKeys[keyCode] !== undefined;
         const key = new Key({
           code: keyCode,
           isSpecial,
-          isRepeatable: repeatableKeysSet.has(keyCode),
+          isRepeatable: !isSpecial || commonKeys[keyCode].repeatable,
+          isCommand: isSpecial && commonKeys[keyCode].command,
           ru: isSpecial ? commonKeys[keyCode] : ruKeys[keyCode],
           en: isSpecial ? commonKeys[keyCode] : enKeys[keyCode],
         }).setValue(this);
