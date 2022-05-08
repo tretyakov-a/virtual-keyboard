@@ -12,7 +12,6 @@ class Keyboard {
     this.class = 'keyboard';
     this.language = 'en';
     this.currentKeySet = enKeys;
-    this.pressedKeys = new Set();
     this.pressedCommandKeys = new Set();
     this.pressedKeyCode = '';
     this.textArea = textArea;
@@ -87,9 +86,11 @@ class Keyboard {
   }
 
   toggleCommandBtn(code, value) {
+    const { commandKey } = commonKeys[code];
+    const keys = Object.keys(commonKeys).filter((c) => commonKeys[c].commandKey === commandKey);
     const prop = `is${code}`;
     this[prop] = value === undefined ? !this[prop] : value;
-    this.keys[code].setState(Key.STATE.ACTIVE, this[prop]);
+    keys.forEach((key) => this.keys[key].setState(Key.STATE.ACTIVE, this[prop]));
     return this[prop];
   }
 
