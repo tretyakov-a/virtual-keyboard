@@ -15,10 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     [RU]: ruKeys,
   });
   const container = createElement('div', 'container');
+
   const textArea = new TextArea();
+  const form = createElement('form');
+  form.append(textArea.render());
   const keyboard = new Keyboard(textArea, languageController);
   container.insertAdjacentHTML('afterbegin', header);
-  container.append(textArea.render());
+  container.append(form);
   container.append(keyboard.render());
   container.insertAdjacentHTML('beforeend', footer);
   document.body.append(container);
