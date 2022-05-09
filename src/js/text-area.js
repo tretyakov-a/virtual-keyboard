@@ -70,8 +70,7 @@ class TextArea {
 
   backspace() {
     const { selection: { start, end } } = this;
-    if (start === 0) return;
-    if (start === end) {
+    if (start === end && start !== 0) {
       this.el.setRangeText('', start - 1, end, 'end');
     } else {
       this.deleteSelection();
@@ -80,7 +79,6 @@ class TextArea {
 
   delete() {
     const { selection: { start, end } } = this;
-    if (end === 0) return;
     if (start === end) {
       this.el.setRangeText('', start, end + 1, 'end');
     } else {
