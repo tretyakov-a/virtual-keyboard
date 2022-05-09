@@ -208,13 +208,16 @@ class Keyboard {
     if (!lastKey.isCommand) {
       keysForCompare.add(code);
     }
-    return Object.keys(this.hotKeys).some((opName) => {
-      const keys = this.hotKeys[opName];
+    return Object.keys(this.hotKeys).some((fnName) => {
+      const keys = this.hotKeys[fnName];
       if (lastKey.isCommand && !keys.has(commonKeys[code].commandKey)) {
         return false;
       }
       const isEqual = areSetsEqual(keysForCompare, keys);
-      if (isEqual && this[opName] !== undefined) this[opName](code);
+      if (isEqual) {
+        if (this.textArea[fnName]) this.textArea[fnName]();
+        if (this[fnName]) this[fnName]();
+      }
       return isEqual;
     });
   }
