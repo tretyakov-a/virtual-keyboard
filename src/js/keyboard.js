@@ -1,17 +1,14 @@
 import { createElement, areSetsEqual } from './utils';
-import ruKeys from './data/keys-ru.json';
-import enKeys from './data/keys-en.json';
 import commonKeys from './data/keys-common.json';
 import keyboardLayout from './data/keyboard-layout.json';
 import hotKeys from './data/hotkeys.json';
 import Key from './key';
 
 class Keyboard {
-  constructor(textArea) {
+  constructor(textArea, languageController) {
     this.keys = {};
     this.class = 'keyboard';
-    this.language = 'en';
-    this.currentKeySet = enKeys;
+    this.languageController = languageController;
     this.pressedCommandKeys = new Set();
     this.pressedKeyCode = '';
     this.textArea = textArea;
@@ -189,14 +186,13 @@ class Keyboard {
     if (!Object.keys(this.keys).length) {
       return;
     }
-    Object.keys(this.currentKeySet).forEach((keyCode) => {
+    Object.keys(this.languageController.keySet).forEach((keyCode) => {
       this.keys[keyCode].setValue(this);
     });
   }
 
   languageSwitch() {
-    this.language = this.language === 'en' ? 'ru' : 'en';
-    this.currentKeySet = this.language === 'en' ? enKeys : ruKeys;
+    this.languageController.toggle();
     this.updateButtons();
   }
 
@@ -264,17 +260,14 @@ class Keyboard {
     const keyboard = createElement('div', this.class);
     keyboardLayout.forEach((layoutRow) => {
       const row = createElement('div', `${this.class}__row`);
-      layoutRow.forEach((keyCode) => {
-        const isSpecial = commonKeys[keyCode] !== undefined;
+      layoutRow.forEach((code) => {
+        const special = commonKeys[code];
         const key = new Key({
-          code: keyCode,
-          isSpecial,
-          isRepeatable: !isSpecial || commonKeys[keyCode].repeatable,
-          isCommand: isSpecial && commonKeys[keyCode].command,
-          ru: isSpecial ? commonKeys[keyCode] : ruKeys[keyCode],
-          en: isSpecial ? commonKeys[keyCode] : enKeys[keyCode],
+          code,
+          special,
+          ...(!special && this.languageController.getKeyValues(code)),
         }).setValue(this);
-        this.keys[keyCode] = key;
+        this.keys[code] = key;
         row.append(key.render());
       });
       keyboard.append(row);
