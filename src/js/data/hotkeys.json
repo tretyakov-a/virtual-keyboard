@@ -1,3 +1,4 @@
 {
-  "languageSwitch": ["altKey", "ctrlKey"]
+  "languageSwitch": ["altKey", "ctrlKey"],
+  "selectAll": ["ctrlKey", "KeyA"]
 }

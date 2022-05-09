@@ -19,39 +19,41 @@ class TextArea {
     return { start, end };
   }
 
-  handleTextBlur = (e) => {
-    console.log(e);
-  };
+  isFocused() {
+    return document.activeElement === this.el;
+  }
 
-  setCursor(position) {
-    this.el.selectionStart = position;
-    this.el.selectionEnd = position;
+  setCursor(pos) {
+    this.el.selectionStart = pos;
+    this.el.selectionEnd = pos;
   }
 
   addText(text) {
-    const { selection: { start, end }, value } = this;
-    this.value = value.slice(0, start) + text + value.slice(end);
-    this.setCursor(start + text.length);
+    const { selection: { start, end } } = this;
+    this.el.setRangeText(text, start, end, 'end');
+  }
+
+  selectAll() {
+    this.el.select();
   }
 
   arrowLeft() {
+    // this.addText('◀');
     const { selection: { start } } = this;
-    this.setCursor(start - 1);
+    this.setCursor(start === 0 ? start : start - 1);
   }
 
   arrowRight() {
-    const { selection: { start } } = this;
-    this.setCursor(start + 1);
+    // this.addText('▶');
+    this.setCursor(this.selection.start + 1);
   }
 
   arrowUp() {
-    const { selection: { start, end }, value } = this;
-    console.log(start, end, value);
+    this.addText('▲');
   }
 
   arrowDown() {
-    const { selection: { start, end }, value } = this;
-    console.log(start, end, value);
+    this.addText('▼');
   }
 
   enter() {
@@ -67,35 +69,36 @@ class TextArea {
   }
 
   backspace() {
-    const { selection: { start, end }, value } = this;
-    if (start === end && start !== 0) {
-      this.value = value.slice(0, start - 1) + value.slice(end);
-      this.setCursor(start - 1);
+    const { selection: { start, end } } = this;
+    if (start === 0) return;
+    if (start === end) {
+      this.el.setRangeText('', start - 1, end, 'end');
     } else {
       this.deleteSelection();
     }
   }
 
   delete() {
-    const { selection: { start, end }, value } = this;
-    if (start === end && end !== 0) {
-      this.value = value.slice(0, start) + value.slice(end + 1);
-      this.setCursor(start);
+    const { selection: { start, end } } = this;
+    if (end === 0) return;
+    if (start === end) {
+      this.el.setRangeText('', start, end + 1, 'end');
     } else {
       this.deleteSelection();
     }
   }
 
   deleteSelection() {
-    const { selection: { start, end }, value } = this;
-    this.value = value.slice(0, start) + value.slice(end);
-    this.setCursor(start);
+    const { selection: { start, end } } = this;
+    this.el.setRangeText('', start, end, 'end');
   }
 
   render() {
     if (this.el) return this.el;
 
     const el = createElement('textarea');
+    el.setAttribute('cols', '78');
+    el.setAttribute('rows', '10');
     return el;
   }
 }
