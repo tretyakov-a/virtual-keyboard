@@ -246,9 +246,14 @@ class Keyboard {
   handleMouseUp = (e) => {
     clearTimeout(this.repeatTimer);
     const btn = e.target.closest('.button');
-    if (!btn) return;
-    const isMouseUpOutside = this.pressedKeyCode !== btn.dataset.code;
-    const code = (btn && isMouseUpOutside) || !btn
+    if (!btn) {
+      const pressedKey = this.keys[this.pressedKeyCode];
+      if (pressedKey && !pressedKey.isCommand) {
+        pressedKey.setState(Key.STATE.ACTIVE, false);
+      }
+      return;
+    }
+    const code = this.pressedKeyCode !== btn.dataset.code
       ? this.pressedKeyCode
       : btn.dataset.code;
 
