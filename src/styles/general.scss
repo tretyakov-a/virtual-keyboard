@@ -38,8 +38,10 @@ h1 {
 
 .container {
   max-width: calc(var(--container-width) + 2 * var(--container-padding));
+  min-width: calc(var(--container-min-width) + 2 * var(--container-padding));
   margin: 0 auto;
   padding: 0 var(--container-padding);
+  min-width: 500px;
 }
 
 .textarea, .keyboard {

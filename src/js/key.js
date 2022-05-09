@@ -24,8 +24,12 @@ class Key {
     this.el.classList[method](this.mods[state]);
   }
 
-  getValue() {
-    return this.value;
+  get value() {
+    return this._value;
+  }
+
+  set value(newValue) {
+    this._value = newValue;
   }
 
   setValue({ state, languageController: { language } }) {
@@ -33,6 +37,10 @@ class Key {
     this.value = this.isSpecial ? this.special.value : this[language][state];
     this.el[prop] = this.value;
     return this;
+  }
+
+  setLabel(value) {
+    this.el.innerHTML = value;
   }
 
   render() {
