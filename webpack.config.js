@@ -4,7 +4,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const RemovePlugin = require('remove-files-webpack-plugin');
 
 module.exports = (env) => {
   const { mode = 'development' } = env;
@@ -30,19 +29,8 @@ module.exports = (env) => {
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         minify: false,
-        template: './index.ejs',
+        template: './index.html',
         filename: 'index.html',
-      }),
-      new RemovePlugin({
-        after: {
-          test: [
-            {
-              folder: 'dist/images',
-              method: (absoluteItemPath) => /fa-.*\.svg$/m.test(absoluteItemPath),
-              recursive: true,
-            },
-          ],
-        },
       }),
     ];
     if (isProd) {
@@ -104,19 +92,6 @@ module.exports = (env) => {
             },
           ],
         },
-        // Loading html
-        {
-          test: /\.html$/,
-          use: [
-            {
-              loader: 'html-loader',
-              options: {
-                esModule: false,
-                sources: true,
-              },
-            },
-          ],
-        },
         // Loading images
         {
           test: /\.(jpg|png|svg|gif|ico|mp4)$/,
@@ -140,21 +115,6 @@ module.exports = (env) => {
             ...getStyleLoaders(),
             'sass-loader',
           ],
-        },
-        // Loading css
-        {
-          test: /\.css$/,
-          use: getStyleLoaders(),
-        },
-        // Loading .md
-        {
-          test: /\.(md)$/,
-          type: 'asset/source',
-        },
-        // Loading .ejs templates
-        {
-          test: /\.(ejs)/,
-          loader: 'ejs-compiled-loader',
         },
       ],
     },
