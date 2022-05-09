@@ -64,13 +64,13 @@ class TextArea {
   }
 
   arrowLeft() {
-    // this.addText('◀');
+    // '◀';
     const { selection: { start } } = this;
     this.setCursor(start === 0 ? start : start - 1);
   }
 
   arrowRight() {
-    // this.addText('▶');
+    // '▶';
     this.setCursor(this.selection.start + 1);
   }
 
@@ -125,7 +125,7 @@ class TextArea {
     el.setAttribute('cols', '78');
     el.setAttribute('rows', '10');
     el.setAttribute('wrap', 'hard');
-    el.textContent = 'Real keyboard works only when textarea focused';
+    el.textContent = 'Focus me';
     return el;
   }
 }
