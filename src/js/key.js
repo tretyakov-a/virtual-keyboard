@@ -14,6 +14,9 @@ class Key {
     Object.keys(options).forEach((key) => {
       this[key] = options[key];
     });
+    this.isSpecial = this.special !== undefined;
+    this.isRepeatable = !this.isSpecial || this.special.repeatable;
+    this.isCommand = this.isSpecial && this.special.command;
   }
 
   setState(state, isOn) {
@@ -25,9 +28,9 @@ class Key {
     return this.value;
   }
 
-  setValue({ state, language }) {
+  setValue({ state, languageController: { language } }) {
     const prop = this.isSpecial ? 'innerHTML' : 'textContent';
-    this.value = this.isSpecial ? this[language].value : this[language][state];
+    this.value = this.isSpecial ? this.special.value : this[language][state];
     this.el[prop] = this.value;
     return this;
   }
