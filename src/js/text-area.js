@@ -4,6 +4,7 @@ class TextArea {
   constructor() {
     this.class = 'textarea';
     this.el = this.render();
+    this.setCursor(this.value.length);
   }
 
   get value() {
@@ -124,7 +125,7 @@ class TextArea {
     el.setAttribute('cols', '78');
     el.setAttribute('rows', '10');
     el.setAttribute('wrap', 'hard');
-    el.textContent = 'Hello world';
+    el.textContent = 'Real keyboard works only when textarea focused';
     return el;
   }
 }

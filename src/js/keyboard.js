@@ -23,7 +23,10 @@ class Keyboard {
     this.repeatTimer = null;
 
     this.el = this.render();
+    this.mediaQuery = window.matchMedia('(max-width: 768px)');
+    this.handleMaxWidthChange(this.mediaQuery);
 
+    this.mediaQuery.addEventListener('change', this.handleMaxWidthChange);
     this.el.addEventListener('mousedown', this.handleMouseDown);
     document.addEventListener('mouseup', this.handleMouseUp);
     document.addEventListener('keydown', this.handleKeyDown);
@@ -156,7 +159,7 @@ class Keyboard {
         if (key.isSpecial) {
           this.handleSpecialBtnDown(e);
         } else {
-          this.textArea.addText(key.getValue());
+          this.textArea.addText(key.value);
         }
       }
       this.clearCommandKeys(e);
@@ -286,6 +289,19 @@ class Keyboard {
     this.isShift = false;
     Object.keys(this.keys).forEach((key) => {
       this.keys[key].setState(Key.STATE.ACTIVE, false);
+    });
+  };
+
+  handleMaxWidthChange = ({ matches }) => {
+    Object.keys(commonKeys).forEach((code) => {
+      if (this.keys[code]) {
+        const { value } = this.keys[code];
+        const match = value.match(/.*<br>(.*)/);
+        if (match) {
+          const newValue = matches ? match[1] : value;
+          this.keys[code].setLabel(newValue);
+        }
+      }
     });
   };
 }
