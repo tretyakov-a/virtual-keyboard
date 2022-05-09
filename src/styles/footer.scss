@@ -1,0 +1,40 @@
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__info {
+    line-height: 1.5rem;
+  }
+
+  &__year {
+
+  }
+
+  &__github-link {
+    display: flex;
+    align-items: center;
+
+    svg {
+      display: inline-block;
+      margin-right: 5px;
+      width: 16px;
+      height: 16px;
+      fill: var(--color-dark-2xl);
+      transition: 0.2s;
+    }
+
+    &:hover {
+      svg {
+        fill: var(--color-dark-l);
+      }
+    }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+  }
+}

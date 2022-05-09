@@ -2,8 +2,8 @@ import { createElement } from './utils';
 
 class TextArea {
   constructor() {
+    this.class = 'textarea';
     this.el = this.render();
-    this.el.addEventListener('blur', this.handleTextBlur);
   }
 
   get value() {
@@ -34,15 +34,16 @@ class TextArea {
   }
 
   selectAll() {
+    this.selectMode = TextArea.SELECT_MODE.RIGHT;
     this.el.select();
   }
 
   selectLeft() {
     const { selection: { start, end } } = this;
     if (start === end) {
-      this.selectMode = 'left';
+      this.selectMode = TextArea.SELECT_MODE.LEFT;
     }
-    if (this.selectMode === 'left') {
+    if (this.selectMode === TextArea.SELECT_MODE.LEFT) {
       this.el.setSelectionRange(start !== 0 ? start - 1 : 0, end);
     } else {
       this.el.setSelectionRange(start, end - 1);
@@ -52,9 +53,9 @@ class TextArea {
   selectRight() {
     const { selection: { start, end } } = this;
     if (start === end) {
-      this.selectMode = 'right';
+      this.selectMode = TextArea.SELECT_MODE.RIGHT;
     }
-    if (this.selectMode === 'right') {
+    if (this.selectMode === TextArea.SELECT_MODE.RIGHT) {
       this.el.setSelectionRange(start, end + 1);
     } else {
       this.el.setSelectionRange(start + 1, end);
@@ -73,6 +74,7 @@ class TextArea {
   }
 
   arrowUp() {
+    // TODO: FormData, canvas textmeasure
     this.addText('▲');
   }
 
@@ -118,12 +120,18 @@ class TextArea {
   render() {
     if (this.el) return this.el;
 
-    const el = createElement('textarea');
+    const el = createElement('textarea', this.class);
     el.setAttribute('cols', '78');
     el.setAttribute('rows', '10');
+    el.setAttribute('wrap', 'hard');
     el.textContent = 'Hello world';
     return el;
   }
 }
+
+TextArea.SELECT_MODE = {
+  RIGHT: 'right',
+  LEFT: 'left',
+};
 
 export default TextArea;

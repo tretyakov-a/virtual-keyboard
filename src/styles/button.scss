@@ -1,0 +1,99 @@
+.button {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px 2px 5px 2px;
+  background-color: var(--color-light-xl);
+  box-shadow: 0px 1px 1px 0px var(--color-dark-l);
+  text-align: left;
+  padding: 4px;
+  font-size: 18px;
+  transition: 0.1s;
+  border: 1px solid var(--color-dark-m);
+  position: relative;
+  cursor: pointer;
+  
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+
+  &_active, &:active {
+    transform: translate(0px, 1px);
+    box-shadow: none;
+    background-color: var(--color-primary-light);
+  }
+
+  &_capslock {
+    &::after {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      bottom: 5px;
+      right: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-dark-s);
+      box-shadow: none;
+      transition: 0.2s;
+    }
+  }
+
+  &_on {
+    color: var(--color-primary-dark);
+    &::after {   
+      background-color: var(--color-primary-dark);
+      box-shadow: 0 0 2px 1px #ffffff, 0 0 4px 2px var(--color-primary);
+    }
+  }
+
+  &_backspace,
+  &_capslock,
+  &_tab,
+  &_delete,
+  &_shiftleft,
+  &_enter,
+  &_shiftright {
+    font-size: 14px;
+  }
+
+  &_controlleft,
+  &_controlright,
+  &_altleft,
+  &_altright {
+    font-size: 16px;
+  }
+
+  &_backspace {
+    width: 112px;
+  }
+
+  &_tab {
+    width: 58px;
+  }
+
+  &_capslock, &_controlleft {
+    width: 80px;
+  }
+
+  &_enter {
+    width: 138px;
+  }
+
+  &_shiftleft {
+    width: 113px;
+  }
+
+  &_shiftright {
+    width: 105px;
+  }
+
+  &_space {
+    width: 358px;
+  }
+}
+
+@media (hover: hover) {
+  .button:hover {
+    background-color: var(--color-primary-light);
+  }
+}
