@@ -31,6 +31,7 @@ class Keyboard {
     document.addEventListener('mouseup', this.handleMouseUp);
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
+    window.addEventListener('blur', this.handleWindowBlur);
   }
 
   set isShift(newValue) {
@@ -175,16 +176,13 @@ class Keyboard {
       return;
     }
 
-    if (e.isTrusted) {
+    if (e.isTrusted || !key.isCommand) {
       key.setState(Key.STATE.ACTIVE, false);
     }
 
     if (key.isCommand) {
       this.handleCommandBtnUp(e);
-      return;
     }
-
-    key.setState(Key.STATE.ACTIVE, false);
   };
 
   updateButtons() {
@@ -283,6 +281,20 @@ class Keyboard {
     });
     return keyboard;
   }
+
+  handleWindowBlur = () => {
+    this.pressedKeyCode = '';
+    this.pressedCommandKeys.clear();
+    this.commandKeys.forEach((code) => {
+      const fnName = code[0].toLowerCase() + code.slice(1);
+      if (this[fnName]) this[fnName](false);
+      this.toggleCommandBtn(code, false);
+    });
+    this.isShift = false;
+    Object.keys(this.keys).forEach((key) => {
+      this.keys[key].setState(Key.STATE.ACTIVE, false);
+    });
+  };
 }
 
 Keyboard.STATE = {
