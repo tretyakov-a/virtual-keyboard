@@ -37,6 +37,30 @@ class TextArea {
     this.el.select();
   }
 
+  selectLeft() {
+    const { selection: { start, end } } = this;
+    if (start === end) {
+      this.selectMode = 'left';
+    }
+    if (this.selectMode === 'left') {
+      this.el.setSelectionRange(start !== 0 ? start - 1 : 0, end);
+    } else {
+      this.el.setSelectionRange(start, end - 1);
+    }
+  }
+
+  selectRight() {
+    const { selection: { start, end } } = this;
+    if (start === end) {
+      this.selectMode = 'right';
+    }
+    if (this.selectMode === 'right') {
+      this.el.setSelectionRange(start, end + 1);
+    } else {
+      this.el.setSelectionRange(start + 1, end);
+    }
+  }
+
   arrowLeft() {
     // this.addText('◀');
     const { selection: { start } } = this;
@@ -97,6 +121,7 @@ class TextArea {
     const el = createElement('textarea');
     el.setAttribute('cols', '78');
     el.setAttribute('rows', '10');
+    el.textContent = 'Hello world';
     return el;
   }
 }
