@@ -1,30 +1,30 @@
 {
   "Enter": {    
-    "value": "&#9166; Enter",
+    "value": "Enter<br>&#9166;",
     "repeatable": true
   },
   "Backspace": {    
-    "value": "&#9003; Backspace",
+    "value": "Backspace<br>&#9003;",
     "repeatable": true
   },
   "ShiftLeft": {    
-    "value": "&#8679; Shift",
+    "value": "Shift<br>&#8679;",
     "repeatable": false,
     "command": true,
     "commandKey": "shiftKey"
   },
   "ShiftRight": {    
-    "value": "&#8679; Shift",
+    "value": "Shift<br>&#8679;",
     "repeatable": false,
     "command": true,
     "commandKey": "shiftKey"
   },
   "CapsLock": {    
-    "value": "&#127280; Caps Lock",
+    "value": "Caps Lock<br>&#127280;",
     "repeatable": false
   },
   "Tab": {    
-    "value": "&#11134; Tab",
+    "value": "Tab<br>&#11134;",
     "repeatable": true
   },
   "Space": {    
@@ -84,7 +84,7 @@
     "repeatable": true
   },
   "Delete": {    
-    "value": "&#8998; Del",
+    "value": "Del<br>&#8998;",
     "repeatable": true
   }
 }
