@@ -6,6 +6,11 @@ class TextArea {
     this.el = this.render();
     this.setCursor(this.value.length);
     this.el.addEventListener('click', this.handleClick);
+    setTimeout(() => {
+      const { lineHeight, paddingTop } = window.getComputedStyle(this.el);
+      this.lineHeight = Number.parseFloat(lineHeight);
+      this.paddingTop = Number.parseFloat(paddingTop);
+    });
   }
 
   get value() {
@@ -25,8 +30,14 @@ class TextArea {
     return document.activeElement === this.el;
   }
 
-  handleClick = () => {
-    this.isDecrease = false;
+  handleClick = (e) => {
+    this._resetMoveState();
+    const { offsetY, offsetX } = e;
+    const { lineHeight, paddingTop } = this;
+    if (offsetX > paddingTop + lineHeight) {
+      this.lineIndex = Math.trunc((offsetY - paddingTop) / lineHeight);
+      this.isMouseClick = true;
+    }
   };
 
   setCursor(pos) {
@@ -37,6 +48,7 @@ class TextArea {
   addText(text) {
     const { selection: { start, end } } = this;
     this.el.setRangeText(text, start, end, 'end');
+    this._resetMoveState();
   }
 
   selectAll() {
@@ -68,27 +80,32 @@ class TextArea {
     }
   }
 
+  _resetMoveState() {
+    this.isDecrease = false;
+    this.isBoundaryMove = false;
+    this.isMouseClick = false;
+  }
+
   arrowLeft() {
     // '◀';
     const { selection: { start } } = this;
     this.setCursor(start === 0 ? start : start - 1);
-    this.isDecrease = false;
+    this._resetMoveState();
   }
 
   arrowRight() {
     // '▶';
     this.setCursor(this.selection.start + 1);
-    this.isDecrease = false;
+    this._resetMoveState();
   }
 
   _getEolsPositions() {
     let sum = 0;
     return this.el.value
       .split('\n')
-      .map((row) => row.length)
-      .map((len, i) => {
-        const pos = len + i + sum;
-        sum += len;
+      .map(({ length }, i) => {
+        const pos = length + i + sum;
+        sum += length;
         return pos;
       })
       .slice(0, -1);
@@ -113,45 +130,54 @@ class TextArea {
     const { selection: { start: cursorPos } } = this;
     const rows = new FormData(this.el.parentElement).get('text').split('\n');
     const rowsPositions = this._getRowsPositions(rows);
-    const index = rowsPositions.findIndex(({ start, end }) => (
-      cursorPos >= start && cursorPos <= end
-    ));
-    return { index, rowsPositions, cursorPos };
+    let isWrongIndex = false;
+    let index = rowsPositions.findIndex(({ start, end }, i) => {
+      isWrongIndex = cursorPos === start && this.isMouseClick && this.lineIndex === (i - 1);
+      return cursorPos >= start && cursorPos <= end;
+    });
+    this.isMouseClick = false;
+    index -= isWrongIndex;
+    return { index, rowsPositions };
+  }
+
+  _makeBoundaryMove(direction, rowStart) {
+    const { selection: { start: cursorPos } } = this;
+    const isDirectionUp = direction === TextArea.MOVE_DIRECTION.UP;
+    if (!this.isBoundaryMove) {
+      if (isDirectionUp || !this.isDecrease) {
+        this.prevOffset = cursorPos - rowStart;
+      }
+    }
+    this.isBoundaryMove = true;
+    this.setCursor(isDirectionUp ? 0 : this.el.value.length);
   }
 
   _moveVertically(direction) {
-    const { index, rowsPositions, cursorPos } = this._findRowIndex();
+    const { selection: { start: cursorPos } } = this;
+    const { index, rowsPositions } = this._findRowIndex();
     if (!rowsPositions[index + direction]) {
-      return false;
+      this._makeBoundaryMove(direction, rowsPositions[index].start);
+      return;
     }
     const { start, end } = rowsPositions[index + direction];
-
     let rowOffset = cursorPos - rowsPositions[index].start;
-    if (this.isDecrease && rowOffset < this.prevOffset) {
+    if ((this.isDecrease && rowOffset < this.prevOffset) || this.isBoundaryMove) {
       rowOffset = this.prevOffset;
     }
     this.isDecrease = rowOffset > end - start;
-    if (this.isDecrease) this.prevOffset = rowOffset;
-
+    this.prevOffset = rowOffset;
     this.setCursor(this.isDecrease ? end : start + rowOffset);
-    return true;
+    this.isBoundaryMove = false;
   }
 
   arrowUp() {
-    // canvas textmeasure
-    // this.addText('▲');
-
-    if (!this._moveVertically(TextArea.MOVE_DIRECTION.UP)) {
-      this.setCursor(0);
-    }
+    // '▲';
+    this._moveVertically(TextArea.MOVE_DIRECTION.UP);
   }
 
   arrowDown() {
-    // this.addText('▼');
-
-    if (!this._moveVertically(TextArea.MOVE_DIRECTION.DOWN)) {
-      this.setCursor(this.el.value.length);
-    }
+    // '▼';
+    this._moveVertically(TextArea.MOVE_DIRECTION.DOWN);
   }
 
   enter() {
