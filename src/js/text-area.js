@@ -6,11 +6,12 @@ class TextArea {
     this.el = this.render();
     this.setCursor(this.value.length);
     this.el.addEventListener('click', this.handleClick);
-    setTimeout(() => {
+
+    requestAnimationFrame(() => setTimeout(() => {
       const { lineHeight, paddingTop } = window.getComputedStyle(this.el);
       this.lineHeight = Number.parseFloat(lineHeight);
       this.paddingTop = Number.parseFloat(paddingTop);
-    });
+    }, 0));
   }
 
   get value() {
@@ -144,7 +145,7 @@ class TextArea {
     const { selection: { start: cursorPos } } = this;
     const isDirectionUp = direction === TextArea.MOVE_DIRECTION.UP;
     if (!this.isBoundaryMove) {
-      if (isDirectionUp || !this.isDecrease) {
+      if (!this.isDecrease) {
         this.prevOffset = cursorPos - rowStart;
       }
     }
