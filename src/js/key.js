@@ -24,6 +24,10 @@ class Key {
     this.el.classList[method](this.mods[state]);
   }
 
+  get isArrow() {
+    return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(this.code);
+  }
+
   get value() {
     return this._value;
   }

@@ -119,6 +119,7 @@ class Keyboard {
     const { commandKey } = commonKeys[code];
     const fnName = code[0].toLowerCase() + code.slice(1);
     if (isTrusted) {
+      this.toggleCommandBtn(code, false);
       this.pressedCommandKeys.delete(commandKey);
       if (this[fnName]) this[fnName](false);
     }
@@ -155,14 +156,17 @@ class Keyboard {
       }
     } else {
       const cmdsNumber = this.pressedCommandKeys.size;
-      if (!this.handleHotkey(e) && (!cmdsNumber || (cmdsNumber === 1 && this.isShift))) {
+      const isHotKey = this.handleHotkey(e);
+      if (!isHotKey && (!cmdsNumber || (cmdsNumber === 1 && this.isShift))) {
         if (key.isSpecial) {
           this.handleSpecialBtnDown(e);
         } else {
           this.textArea.addText(key.value);
         }
       }
-      this.clearCommandKeys(e);
+      if (!isHotKey || (isHotKey && !key.isArrow)) {
+        this.clearCommandKeys(e);
+      }
     }
   };
 
