@@ -36,7 +36,7 @@ class Key {
     this._value = newValue;
   }
 
-  setValue({ state, languageController: { language } }) {
+  setValue(state, language) {
     const prop = this.isSpecial ? 'innerHTML' : 'textContent';
     this.value = this.isSpecial ? this.special.value : this[language][state];
     this.el[prop] = this.value;
