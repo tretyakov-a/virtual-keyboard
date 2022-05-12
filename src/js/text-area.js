@@ -176,6 +176,10 @@ class TextArea {
     let lastPosition = 0;
     return rows.map((row, i) => {
       const start = lastPosition;
+      if (i === 0 && row.length === 0) {
+        lastPosition += 1;
+        return { start, end: 1, value: row };
+      }
       let end = lastPosition + row.length - (i === (rows.length - 1) ? 0 : 1);
       if (eolsPositions.find((v) => v === end + 1)) {
         end += 1;
