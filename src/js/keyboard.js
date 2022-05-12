@@ -5,7 +5,7 @@ import hotKeys from './data/hotkeys.json';
 import Key from './key';
 
 class Keyboard {
-  constructor(textArea, languageController) {
+  constructor(languageController, textArea, keySets) {
     this.keys = {};
     this.class = 'keyboard';
     this.languageController = languageController;
@@ -17,12 +17,13 @@ class Keyboard {
       return acc;
     }, {});
     this.commandKeys = Object.keys(commonKeys).filter((key) => commonKeys[key].command);
+    this.languageDependentKeys = Object.keys(keySets[languageController.language]);
     this.state = Keyboard.STATE.KEY;
     this.isCapslock = false;
     this.isShift = false;
     this.repeatTimer = null;
 
-    this.el = this.render();
+    this.el = this.render(keySets);
     this.mediaQuery = window.matchMedia('(max-width: 768px)');
     this.handleMaxWidthChange(this.mediaQuery);
 
@@ -125,7 +126,7 @@ class Keyboard {
     }
   }
 
-  clearCommandKeys({ isTrusted }) {
+  clearCommandKeys({ isTrusted = false } = {}) {
     if (!isTrusted) {
       this.pressedCommandKeys.clear();
       this.commandKeys.forEach((code) => {
@@ -161,7 +162,7 @@ class Keyboard {
         if (key.isSpecial) {
           this.handleSpecialBtnDown(e);
         } else {
-          this.textArea.addText(key.value);
+          this.textArea.addCharacter(key);
         }
       }
       if (!isHotKey || (isHotKey && !key.isArrow)) {
@@ -190,11 +191,17 @@ class Keyboard {
   };
 
   updateButtons() {
-    if (!Object.keys(this.keys).length) {
+    const { keys } = this;
+    if (!Object.keys(keys).length) {
       return;
     }
-    Object.keys(this.languageController.keySet).forEach((keyCode) => {
-      this.keys[keyCode].setValue(this);
+    const {
+      languageDependentKeys,
+      state,
+      languageController: { language },
+    } = this;
+    languageDependentKeys.forEach((keyCode) => {
+      keys[keyCode].setValue(state, language);
     });
   }
 
@@ -262,8 +269,16 @@ class Keyboard {
     this.pressedKeyCode = '';
   };
 
-  render() {
+  getKeyValues(code, keySets) {
+    return Object.keys(keySets).reduce((acc, key) => {
+      acc[key] = keySets[key][code];
+      return acc;
+    }, {});
+  }
+
+  render(keySets) {
     if (this.el) return this.el;
+    const { state, languageController: { language } } = this;
     const keyboard = createElement('div', this.class);
     keyboardLayout.forEach((layoutRow) => {
       const row = createElement('div', `${this.class}__row`);
@@ -272,8 +287,8 @@ class Keyboard {
         const key = new Key({
           code,
           special,
-          ...(!special && this.languageController.getKeyValues(code)),
-        }).setValue(this);
+          ...(!special && this.getKeyValues(code, keySets)),
+        }).setValue(state, language);
         this.keys[code] = key;
         row.append(key.render());
       });
@@ -284,12 +299,7 @@ class Keyboard {
 
   handleWindowBlur = () => {
     this.pressedKeyCode = '';
-    this.pressedCommandKeys.clear();
-    this.commandKeys.forEach((code) => {
-      const fnName = code[0].toLowerCase() + code.slice(1);
-      if (this[fnName]) this[fnName](false);
-      this.toggleCommandBtn(code, false);
-    });
+    this.clearCommandKeys();
     this.isShift = false;
     Object.keys(this.keys).forEach((key) => {
       this.keys[key].setState(Key.STATE.ACTIVE, false);

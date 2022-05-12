@@ -1,20 +1,8 @@
 class LanguageController {
-  constructor(keySets) {
+  constructor() {
     if (!this._load()) {
       this.language = LanguageController.LANGUAGE.DEFAULT;
     }
-    this.keySets = keySets;
-  }
-
-  get keySet() {
-    return this.keySets[this.language];
-  }
-
-  getKeyValues(code) {
-    return Object.keys(this.keySets).reduce((acc, key) => {
-      acc[key] = this.keySets[key][code];
-      return acc;
-    }, {});
   }
 
   get language() {
