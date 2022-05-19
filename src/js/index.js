@@ -9,14 +9,14 @@ import header from './templates/header';
 import ruKeys from './data/keys-ru.json';
 import enKeys from './data/keys-en.json';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const { EN, RU } = LanguageController.LANGUAGE;
-  const font = 'normal 16px/1.4 "Roboto", sans-serif';
-  // const font = 'normal 16px/1.4 monospace';
-  const textMeasureTool = new TextMeasureTool(font);
-  textMeasureTool.addKeySetMetrics(enKeys);
-  textMeasureTool.addKeySetMetrics(ruKeys);
+const font = 'normal 16px/1.4 sans-serif';
 
+window.addEventListener('load', () => {
+  const { EN, RU } = LanguageController.LANGUAGE;
+
+  const textMeasureTool = new TextMeasureTool(font);
+  textMeasureTool.addKeySetMetrics(ruKeys);
+  textMeasureTool.addKeySetMetrics(enKeys);
   const container = createElement('div', 'container');
   const textArea = new TextArea(textMeasureTool);
   const form = createElement('form');

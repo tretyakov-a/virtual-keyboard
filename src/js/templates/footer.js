@@ -3,6 +3,7 @@ export default `
     <div class="footer__info">
       <p>Keyboard was created in Windows OS</p>
       <p>Language switch: Ctrl + Alt</p>
+      <p>Selection: Ctrl + A; Shift + ◀,▶,▲,▼</p>
     </div>
     <div class="footer__right">
     <a class="footer__github-link" href="https://github.com/tretyakov-a" title="GitHub" target="_blank">

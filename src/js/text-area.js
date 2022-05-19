@@ -93,28 +93,51 @@ class TextArea {
     this.el.select();
   }
 
-  selectLeft() {
+  _select(selectionMode, match, notMatch) {
     const { selection: { start, end } } = this;
     if (start === end) {
-      this.selectMode = TextArea.SELECT_MODE.LEFT;
+      this.selectMode = selectionMode;
     }
-    if (this.selectMode === TextArea.SELECT_MODE.LEFT) {
-      this.el.setSelectionRange(start !== 0 ? start - 1 : 0, end);
-    } else {
-      this.el.setSelectionRange(start, end - 1);
-    }
+    const selectionBorders = this.selectMode === selectionMode
+      ? match(start, end)
+      : notMatch(start, end);
+    this.el.setSelectionRange(...selectionBorders);
+  }
+
+  selectLeft() {
+    this._select(
+      TextArea.SELECT_MODE.LEFT,
+      (start, end) => [start !== 0 ? start - 1 : 0, end],
+      (start, end) => [start, end - 1],
+    );
+    this._setCurrentCursor();
   }
 
   selectRight() {
-    const { selection: { start, end } } = this;
-    if (start === end) {
-      this.selectMode = TextArea.SELECT_MODE.RIGHT;
-    }
-    if (this.selectMode === TextArea.SELECT_MODE.RIGHT) {
-      this.el.setSelectionRange(start, end + 1);
-    } else {
-      this.el.setSelectionRange(start + 1, end);
-    }
+    this._select(
+      TextArea.SELECT_MODE.RIGHT,
+      (start, end) => [start, end + 1],
+      (start, end) => [start + 1, end],
+    );
+    this._setCurrentCursor();
+  }
+
+  selectUp() {
+    const newCursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.UP);
+    this._select(
+      TextArea.SELECT_MODE.LEFT,
+      (_, end) => [newCursorPosition, end],
+      (start) => [start, newCursorPosition],
+    );
+  }
+
+  selectDown() {
+    const newCursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.DOWN);
+    this._select(
+      TextArea.SELECT_MODE.RIGHT,
+      (start) => [start, newCursorPosition],
+      (_, end) => [newCursorPosition, end],
+    );
   }
 
   _resetMoveState() {
@@ -192,6 +215,11 @@ class TextArea {
     });
   }
 
+  _getCursorPosition() {
+    const { selection: { start, end } } = this;
+    return (start === end || this.selectionMode === TextArea.SELECT_MODE.LEFT) ? start : end;
+  }
+
   _findRowIndex() {
     let { selection: { start: cursorPosition } } = this;
     let isWrongIndex = false;
@@ -205,14 +233,15 @@ class TextArea {
   }
 
   _makeBoundaryMove(direction, currRow) {
-    const { selection: { start: cursorPosition }, textMeasureTool: { getStringWidth } } = this;
+    const { selection: { start, end }, textMeasureTool: { getStringWidth } } = this;
     const isDirectionUp = direction === TextArea.MOVE_DIRECTION.UP;
+    const cursorPosition = this.selectMode === TextArea.SELECT_MODE.LEFT ? start : end;
     if (!this.isBoundaryMove && !this.isDecrease) {
       this.prevOffset = cursorPosition - currRow.start;
       this.cursor.rowOffsetWidth = getStringWidth(currRow.value.slice(0, this.prevOffset));
     }
     this.isBoundaryMove = true;
-    this.setCursor(isDirectionUp ? 0 : this.el.value.length);
+    return isDirectionUp ? 0 : this.el.value.length;
   }
 
   _getNewCursorPosition({ start, value }) {
@@ -246,8 +275,7 @@ class TextArea {
       cursor: { rowIndex },
     } = this;
     if (!rowsPositions[rowIndex + direction]) {
-      this._makeBoundaryMove(direction, rowsPositions[rowIndex]);
-      return;
+      return this._makeBoundaryMove(direction, rowsPositions[rowIndex]);
     }
     const next = rowsPositions[rowIndex + direction];
     const nextRowWidth = getStringWidth(next.value);
@@ -256,18 +284,20 @@ class TextArea {
       ? next.end
       : next.start + this._getNewCursorPosition(next);
     this.cursor.rowIndex += direction;
-    this.setCursor(newCursorPosition);
     this.isBoundaryMove = false;
+    return newCursorPosition;
   }
 
   arrowUp() {
     // '▲';
-    this._moveVertically(TextArea.MOVE_DIRECTION.UP);
+    const cursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.UP);
+    this.setCursor(cursorPosition);
   }
 
   arrowDown() {
     // '▼';
-    this._moveVertically(TextArea.MOVE_DIRECTION.DOWN);
+    const cursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.DOWN);
+    this.setCursor(cursorPosition);
   }
 
   enter() {
@@ -323,6 +353,7 @@ class TextArea {
     el.setAttribute('rows', '10');
     el.setAttribute('wrap', 'hard');
     el.setAttribute('name', this.name);
+    el.setAttribute('spellcheck', false);
     // el.textContent = 'Focus me';
     el.textContent = 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.';
     return el;
@@ -343,6 +374,8 @@ TextArea.MOVE_DIRECTION = {
 TextArea.SELECT_MODE = {
   RIGHT: 'right',
   LEFT: 'left',
+  UP: 'up',
+  DOWN: 'down',
 };
 
 export default TextArea;
