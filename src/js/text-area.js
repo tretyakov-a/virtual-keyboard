@@ -193,7 +193,9 @@ class TextArea {
   }
 
   _getRowsPositions() {
-    const rows = new FormData(this.el.parentElement).get(this.name).split('\n');
+    const value = new FormData(this.el.parentElement).get(this.name);
+    const isRN = value.includes('\r\n');
+    const rows = value.split(isRN ? '\r\n' : '\n');
     const eolsPositions = this._getEolsPositions();
     this.autoEols.length = 0;
     let lastPosition = 0;
