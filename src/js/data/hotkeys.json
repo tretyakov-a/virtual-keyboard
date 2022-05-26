@@ -1,0 +1,8 @@
+{
+  "languageSwitch": ["altKey", "ctrlKey"],
+  "selectAll": ["ctrlKey", "KeyA"],
+  "selectLeft": ["shiftKey", "ArrowLeft"],
+  "selectRight": ["shiftKey", "ArrowRight"],
+  "selectUp": ["shiftKey", "ArrowUp"],
+  "selectDown": ["shiftKey", "ArrowDown"]
+}

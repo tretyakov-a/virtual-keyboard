@@ -1,0 +1,108 @@
+*, ::before, ::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--main-font);
+  color: var(--color-dark-2xl);
+  background-color: var(--color-light-s);
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-dark-2xl);
+  transition: 0.2s;
+}
+
+a:hover {
+  color: var(--color-dark-l);
+}
+
+img {
+  display: block;
+}
+
+ul {
+  list-style: none;
+}
+
+h1 {
+  text-align: center;
+}
+
+.container {
+  max-width: calc(var(--container-width) + 2 * var(--container-padding));
+  min-width: calc(var(--container-min-width) + 2 * var(--container-padding));
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  min-width: 500px;
+}
+
+.textarea, .keyboard {
+  border: 1px solid var(--color-dark-m);
+  border-radius: 10px;
+  box-shadow: 0px 1px 2px 0px var(--color-dark-m);
+}
+
+.textarea {
+  display: block;
+  margin: 10px auto;
+  width: 100%;
+  height: 200px;
+  padding: 10px;
+  resize: none;
+  background-color: var(--color-light-xl);
+  font-family: var(--textarea-font);
+  font-size: 16px;
+  line-height: 1.3rem;
+
+  &:focus {
+    outline: 2px solid gray;
+  }
+}
+
+.keyboard {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--color-dark-s);
+  &__row {
+    display: flex;
+    margin-bottom: 5px;
+  }
+}
+
+.rsschool-logo {
+  display: block;
+  width: 100px;
+
+  .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st8, .st9 {
+    fill: var(--color-dark-s);
+    stroke: var(--color-dark-3xl);
+  }
+
+  // JS background
+  .st1 {
+    fill: var(--color-dark-2xl);
+  }
+  
+  // JS oval background
+  .st7 {
+    fill: var(--color-light-s);
+  }
+
+  // RS SCHOOL
+  .logo-path {
+    fill: var(--color-dark-s);
+    stroke: var(--color-dark-3xl);
+    stroke-width: 4px;
+    transition: 0.1s ease-in;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
