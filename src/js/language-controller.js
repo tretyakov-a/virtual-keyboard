@@ -1,18 +1,18 @@
 class LanguageController {
   constructor() {
-    if (!this._load()) {
+    if (!this.load()) {
       this.language = LanguageController.LANGUAGE.DEFAULT;
     }
   }
 
   get language() {
-    return this._language;
+    return this.privateLanguage;
   }
 
   set language(newValue) {
-    if (this._language !== newValue) {
-      this._language = newValue;
-      this._save();
+    if (this.privateLanguage !== newValue) {
+      this.privateLanguage = newValue;
+      this.save();
     }
   }
 
@@ -22,11 +22,11 @@ class LanguageController {
     this.language = newLanguage;
   }
 
-  _save() {
+  save() {
     localStorage.setItem(LanguageController.STORAGE, this.language);
   }
 
-  _load() {
+  load() {
     this.language = localStorage.getItem(LanguageController.STORAGE);
     return this.language !== null;
   }

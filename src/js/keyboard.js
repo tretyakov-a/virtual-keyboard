@@ -1,4 +1,4 @@
-import { createElement, areSetsEqual } from './utils';
+import { createElement, areSetsEqual, getKeyValues } from './utils';
 import commonKeys from './data/keys-common.json';
 import keyboardLayout from './data/keyboard-layout.json';
 import hotKeys from './data/hotkeys.json';
@@ -16,8 +16,12 @@ class Keyboard {
       acc[key] = new Set(hotKeys[key]);
       return acc;
     }, {});
-    this.commandKeys = Object.keys(commonKeys).filter((key) => commonKeys[key].command);
-    this.languageDependentKeys = Object.keys(keySets[languageController.language]);
+    this.commandKeys = Object.keys(commonKeys).filter(
+      (key) => commonKeys[key].command,
+    );
+    this.languageDependentKeys = Object.keys(
+      keySets[languageController.language],
+    );
     this.state = Keyboard.STATE.KEY;
     this.isCapslock = false;
     this.isShift = false;
@@ -36,34 +40,32 @@ class Keyboard {
   }
 
   set isShift(newValue) {
-    this._isShift = newValue;
+    this.privateIsShift = newValue;
     this.changeState();
   }
 
   get isShift() {
-    return this._isShift;
+    return this.privateIsShift;
   }
 
   set isCapslock(newValue) {
-    this._isCapslock = newValue;
+    this.privateIsCapsLock = newValue;
     this.toggleButtonOn(['CapsLock'], newValue);
     this.changeState();
   }
 
   get isCapslock() {
-    return this._isCapslock;
+    return this.privateIsCapsLock;
   }
 
   changeState() {
     const {
       KEY, SHIFT, CAPSLOCK, CAPSANDSHIFT,
     } = Keyboard.STATE;
-    this.state = (
-      ((this.isCapslock && this.isShift) && CAPSANDSHIFT)
+    this.state = (this.isCapslock && this.isShift && CAPSANDSHIFT)
       || (this.isShift && SHIFT)
       || (this.isCapslock && CAPSLOCK)
-      || KEY
-    );
+      || KEY;
     this.updateButtons();
   }
 
@@ -89,7 +91,9 @@ class Keyboard {
 
   toggleCommandBtn(code, value) {
     const { commandKey } = commonKeys[code];
-    const keys = Object.keys(commonKeys).filter((c) => commonKeys[c].commandKey === commandKey);
+    const keys = Object.keys(commonKeys).filter(
+      (c) => commonKeys[c].commandKey === commandKey,
+    );
     const prop = `is${code}`;
     this[prop] = value === undefined ? !this[prop] : value;
     keys.forEach((key) => this.keys[key].setState(Key.STATE.ACTIVE, this[prop]));
@@ -232,7 +236,9 @@ class Keyboard {
 
   repeatBtn(code, delay) {
     this.repeatTimer = setTimeout(() => {
-      document.dispatchEvent(new KeyboardEvent('keydown', { code, repeat: true }));
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', { code, repeat: true }),
+      );
       this.repeatBtn(code, Keyboard.REPEAT.PERIOD);
     }, delay);
   }
@@ -269,16 +275,12 @@ class Keyboard {
     this.pressedKeyCode = '';
   };
 
-  getKeyValues(code, keySets) {
-    return Object.keys(keySets).reduce((acc, key) => {
-      acc[key] = keySets[key][code];
-      return acc;
-    }, {});
-  }
-
   render(keySets) {
     if (this.el) return this.el;
-    const { state, languageController: { language } } = this;
+    const {
+      state,
+      languageController: { language },
+    } = this;
     const keyboard = createElement('div', this.class);
     keyboardLayout.forEach((layoutRow) => {
       const row = createElement('div', `${this.class}__row`);
@@ -287,7 +289,7 @@ class Keyboard {
         const key = new Key({
           code,
           special,
-          ...(!special && this.getKeyValues(code, keySets)),
+          ...(!special && getKeyValues(code, keySets)),
         }).setValue(state, language);
         this.keys[code] = key;
         row.append(key.render());

@@ -10,7 +10,11 @@ function areSetsEqual(a, b) {
   return a.size === b.size && [...a].every((value) => b.has(value));
 }
 
-export {
-  createElement,
-  areSetsEqual,
-};
+function getKeyValues(code, keySets) {
+  return Object.keys(keySets).reduce((acc, key) => {
+    acc[key] = keySets[key][code];
+    return acc;
+  }, {});
+}
+
+export { createElement, areSetsEqual, getKeyValues };

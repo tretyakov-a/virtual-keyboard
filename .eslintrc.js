@@ -3,15 +3,10 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    'airbnb',
-  ],
+  extends: ["airbnb-base"],
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+    ecmaVersion: "latest",
+    sourceType: "module",
   },
-  rules: {
-    'class-methods-use-this': 0,
-    'no-underscore-dangle': [2, { allowAfterThis: true }],
-  },
+  rules: {},
 };

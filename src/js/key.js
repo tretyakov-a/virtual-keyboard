@@ -2,7 +2,7 @@ import { createElement } from './utils';
 
 class Key {
   constructor(options) {
-    this._parseOptions(options);
+    this.parseOptions(options);
     this.mods = {
       active: 'button_active',
       on: 'button_on',
@@ -10,7 +10,7 @@ class Key {
     this.el = this.render();
   }
 
-  _parseOptions(options) {
+  parseOptions(options) {
     Object.keys(options).forEach((key) => {
       this[key] = options[key];
     });
@@ -25,15 +25,17 @@ class Key {
   }
 
   get isArrow() {
-    return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(this.code);
+    return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(
+      this.code,
+    );
   }
 
   get value() {
-    return this._value;
+    return this.privateValue;
   }
 
   set value(newValue) {
-    this._value = newValue;
+    this.privateValue = newValue;
   }
 
   setValue(state, language) {

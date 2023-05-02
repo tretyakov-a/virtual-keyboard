@@ -13,7 +13,7 @@ class TextArea {
     this.el.addEventListener('input', this.handleChange);
     new ResizeObserver(this.handleChange).observe(this.el);
 
-    this._resetMoveState();
+    this.resetMoveState();
 
     requestAnimationFrame(() => setTimeout(() => {
       const { lineHeight, paddingTop } = window.getComputedStyle(this.el);
@@ -43,45 +43,57 @@ class TextArea {
 
   handleClick = (e) => {
     const { offsetY, offsetX } = e;
-    const { lineHeight, paddingTop, el: { scrollTop } } = this;
+    const {
+      lineHeight,
+      paddingTop,
+      el: { scrollTop },
+    } = this;
     if (offsetX > paddingTop + lineHeight) {
-      this.lineIndex = Math.trunc((offsetY + scrollTop - paddingTop) / lineHeight);
+      this.lineIndex = Math.trunc(
+        (offsetY + scrollTop - paddingTop) / lineHeight,
+      );
       this.isMouseClick = true;
     }
-    this._resetMoveState();
+    this.resetMoveState();
   };
 
   setCursor(pos) {
     this.el.selectionStart = pos;
     this.el.selectionEnd = pos;
-    this._moveScroll();
+    this.moveScroll();
   }
 
   handleChange = (e) => {
     if (e && e.type === 'input') {
       this.textMeasureTool.getStringWidth(this.el.value);
     }
-    this.rowsPositions = this._getRowsPositions();
+    this.rowsPositions = this.getRowsPositions();
     this.autoEols.pop();
-    this._moveScroll();
-    this._resetMoveState();
+    this.moveScroll();
+    this.resetMoveState();
   };
 
-  _moveScroll() {
-    const { lineHeight, paddingTop, el: { offsetHeight } } = this;
-    const { rowIndex } = this._findRowIndex();
+  moveScroll() {
+    const {
+      lineHeight,
+      paddingTop,
+      el: { offsetHeight },
+    } = this;
+    const { rowIndex } = this.findRowIndex();
     const rowBottom = paddingTop + lineHeight * (rowIndex + 1) - this.el.scrollTop;
     const rowTop = rowBottom - lineHeight;
 
     if (rowBottom > offsetHeight) {
-      this.el.scrollTop += (rowBottom - offsetHeight);
+      this.el.scrollTop += rowBottom - offsetHeight;
     } else if (rowTop < 0) {
       this.el.scrollTop += rowTop;
     }
   }
 
   addCharacter(key) {
-    const { selection: { start, end } } = this;
+    const {
+      selection: { start, end },
+    } = this;
     const isKeyInstance = key instanceof Key;
     const char = isKeyInstance ? key.value : key;
     this.el.setRangeText(char, start, end, 'end');
@@ -93,8 +105,10 @@ class TextArea {
     this.el.select();
   }
 
-  _select(selectionMode, match, notMatch) {
-    const { selection: { start, end } } = this;
+  select(selectionMode, match, notMatch) {
+    const {
+      selection: { start, end },
+    } = this;
     if (start === end) {
       this.selectMode = selectionMode;
     }
@@ -105,26 +119,26 @@ class TextArea {
   }
 
   selectLeft() {
-    this._select(
+    this.select(
       TextArea.SELECT_MODE.LEFT,
       (start, end) => [start !== 0 ? start - 1 : 0, end],
       (start, end) => [start, end - 1],
     );
-    this._setCurrentCursor();
+    this.setCurrentCursor();
   }
 
   selectRight() {
-    this._select(
+    this.select(
       TextArea.SELECT_MODE.RIGHT,
       (start, end) => [start, end + 1],
       (start, end) => [start + 1, end],
     );
-    this._setCurrentCursor();
+    this.setCurrentCursor();
   }
 
   selectUp() {
-    const newCursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.UP);
-    this._select(
+    const newCursorPosition = this.moveVertically(TextArea.MOVE_DIRECTION.UP);
+    this.select(
       TextArea.SELECT_MODE.LEFT,
       (_, end) => [newCursorPosition, end],
       (start) => [start, newCursorPosition],
@@ -132,30 +146,30 @@ class TextArea {
   }
 
   selectDown() {
-    const newCursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.DOWN);
-    this._select(
+    const newCursorPosition = this.moveVertically(TextArea.MOVE_DIRECTION.DOWN);
+    this.select(
       TextArea.SELECT_MODE.RIGHT,
       (start) => [start, newCursorPosition],
       (_, end) => [newCursorPosition, end],
     );
   }
 
-  _resetMoveState() {
+  resetMoveState() {
     if (this.isDecrease !== undefined) {
-      this._setCurrentCursor();
+      this.setCurrentCursor();
     }
     this.isDecrease = false;
     this.isBoundaryMove = false;
     this.isMouseClick = false;
   }
 
-  _setCurrentCursor() {
+  setCurrentCursor() {
     const {
       rowsPositions,
       textMeasureTool: { getStringWidth },
     } = this;
 
-    const { rowIndex, cursorPosition } = this._findRowIndex();
+    const { rowIndex, cursorPosition } = this.findRowIndex();
     const { start, value } = rowsPositions[rowIndex];
     const rowOffset = cursorPosition - start;
     const rowOffsetWidth = getStringWidth(value.slice(0, rowOffset));
@@ -169,18 +183,20 @@ class TextArea {
 
   arrowLeft() {
     // '◀';
-    const { selection: { start } } = this;
+    const {
+      selection: { start },
+    } = this;
     this.setCursor(start === 0 ? start : start - 1);
-    this._resetMoveState();
+    this.resetMoveState();
   }
 
   arrowRight() {
     // '▶';
     this.setCursor(this.selection.start + 1);
-    this._resetMoveState();
+    this.resetMoveState();
   }
 
-  _getEolsPositions() {
+  getEolsPositions() {
     let sum = 0;
     return this.el.value
       .split('\n')
@@ -192,11 +208,11 @@ class TextArea {
       .slice(0, -1);
   }
 
-  _getRowsPositions() {
+  getRowsPositions() {
     const value = new FormData(this.el.parentElement).get(this.name);
     const isRN = value.includes('\r\n');
     const rows = value.split(isRN ? '\r\n' : '\n');
-    const eolsPositions = this._getEolsPositions();
+    const eolsPositions = this.getEolsPositions();
     this.autoEols.length = 0;
     let lastPosition = 0;
     return rows.map((row, i) => {
@@ -205,7 +221,7 @@ class TextArea {
         lastPosition += 1;
         return { start, end: 1, value: row };
       }
-      let end = lastPosition + row.length - (i === (rows.length - 1) ? 0 : 1);
+      let end = lastPosition + row.length - (i === rows.length - 1 ? 0 : 1);
       if (eolsPositions.find((v) => v === end + 1)) {
         end += 1;
         lastPosition += 1;
@@ -217,16 +233,24 @@ class TextArea {
     });
   }
 
-  _getCursorPosition() {
-    const { selection: { start, end } } = this;
-    return (start === end || this.selectionMode === TextArea.SELECT_MODE.LEFT) ? start : end;
+  getCursorPosition() {
+    const {
+      selection: { start, end },
+    } = this;
+    return start === end || this.selectionMode === TextArea.SELECT_MODE.LEFT
+      ? start
+      : end;
   }
 
-  _findRowIndex() {
-    let { selection: { start: cursorPosition } } = this;
+  findRowIndex() {
+    let {
+      selection: { start: cursorPosition },
+    } = this;
     let isWrongIndex = false;
     let rowIndex = this.rowsPositions.findIndex(({ start, end }, i) => {
-      isWrongIndex = cursorPosition === start && this.isMouseClick && this.lineIndex === (i - 1);
+      isWrongIndex = cursorPosition === start
+        && this.isMouseClick
+        && this.lineIndex === i - 1;
       return cursorPosition >= start && cursorPosition <= end;
     });
     rowIndex -= isWrongIndex;
@@ -234,20 +258,28 @@ class TextArea {
     return { rowIndex, cursorPosition };
   }
 
-  _makeBoundaryMove(direction, currRow) {
-    const { selection: { start, end }, textMeasureTool: { getStringWidth } } = this;
+  makeBoundaryMove(direction, currRow) {
+    const {
+      selection: { start, end },
+      textMeasureTool: { getStringWidth },
+    } = this;
     const isDirectionUp = direction === TextArea.MOVE_DIRECTION.UP;
     const cursorPosition = this.selectMode === TextArea.SELECT_MODE.LEFT ? start : end;
     if (!this.isBoundaryMove && !this.isDecrease) {
       this.prevOffset = cursorPosition - currRow.start;
-      this.cursor.rowOffsetWidth = getStringWidth(currRow.value.slice(0, this.prevOffset));
+      this.cursor.rowOffsetWidth = getStringWidth(
+        currRow.value.slice(0, this.prevOffset),
+      );
     }
     this.isBoundaryMove = true;
     return isDirectionUp ? 0 : this.el.value.length;
   }
 
-  _getNewCursorPosition({ start, value }) {
-    const { textMeasureTool: { getCharWidth }, cursor: { rowOffsetWidth } } = this;
+  getNewCursorPosition({ start, value }) {
+    const {
+      textMeasureTool: { getCharWidth },
+      cursor: { rowOffsetWidth },
+    } = this;
     const { length } = value;
     let partWidth = 0;
     let prevCharWidth = 0;
@@ -259,7 +291,7 @@ class TextArea {
       if (partWidth > rowOffsetWidth) {
         const rightPart = partWidth - rowOffsetWidth;
         const leftPart = prevCharWidth - rightPart;
-        return (rightPart >= leftPart) ? i - 1 : i;
+        return rightPart >= leftPart ? i - 1 : i;
       }
       if (i === length - 1 && this.autoEols.includes(start + length)) {
         return length - 1;
@@ -270,21 +302,21 @@ class TextArea {
     return length;
   }
 
-  _moveVertically(direction) {
+  moveVertically(direction) {
     const {
       rowsPositions,
       textMeasureTool: { getStringWidth },
       cursor: { rowIndex },
     } = this;
     if (!rowsPositions[rowIndex + direction]) {
-      return this._makeBoundaryMove(direction, rowsPositions[rowIndex]);
+      return this.makeBoundaryMove(direction, rowsPositions[rowIndex]);
     }
     const next = rowsPositions[rowIndex + direction];
     const nextRowWidth = getStringWidth(next.value);
     this.isDecrease = this.cursor.rowOffsetWidth > nextRowWidth;
     const newCursorPosition = this.isDecrease
       ? next.end
-      : next.start + this._getNewCursorPosition(next);
+      : next.start + this.getNewCursorPosition(next);
     this.cursor.rowIndex += direction;
     this.isBoundaryMove = false;
     return newCursorPosition;
@@ -292,13 +324,13 @@ class TextArea {
 
   arrowUp() {
     // '▲';
-    const cursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.UP);
+    const cursorPosition = this.moveVertically(TextArea.MOVE_DIRECTION.UP);
     this.setCursor(cursorPosition);
   }
 
   arrowDown() {
     // '▼';
-    const cursorPosition = this._moveVertically(TextArea.MOVE_DIRECTION.DOWN);
+    const cursorPosition = this.moveVertically(TextArea.MOVE_DIRECTION.DOWN);
     this.setCursor(cursorPosition);
   }
 
@@ -316,8 +348,10 @@ class TextArea {
     this.addCharacter(TextArea.SYMBOL.SPACE);
   }
 
-  _deleteSymbol(direction, condition = true) {
-    let { selection: { start, end } } = this;
+  deleteSymbol(direction, condition = true) {
+    let {
+      selection: { start, end },
+    } = this;
     const { LEFT, RIGHT } = TextArea.MOVE_DIRECTION;
     if (start === end && condition) {
       if (direction === LEFT) {
@@ -333,16 +367,20 @@ class TextArea {
   }
 
   backspace() {
-    const { selection: { start } } = this;
-    this._deleteSymbol(TextArea.MOVE_DIRECTION.LEFT, start !== 0);
+    const {
+      selection: { start },
+    } = this;
+    this.deleteSymbol(TextArea.MOVE_DIRECTION.LEFT, start !== 0);
   }
 
   delete() {
-    this._deleteSymbol(TextArea.MOVE_DIRECTION.RIGHT);
+    this.deleteSymbol(TextArea.MOVE_DIRECTION.RIGHT);
   }
 
   deleteSelection() {
-    const { selection: { start, end } } = this;
+    const {
+      selection: { start, end },
+    } = this;
     this.el.setRangeText('', start, end, 'end');
   }
 
@@ -357,7 +395,7 @@ class TextArea {
     el.setAttribute('name', this.name);
     el.setAttribute('spellcheck', false);
     // el.textContent = 'Focus me';
-    el.textContent = 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.';
+    el.textContent = "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.";
     return el;
   }
 }
